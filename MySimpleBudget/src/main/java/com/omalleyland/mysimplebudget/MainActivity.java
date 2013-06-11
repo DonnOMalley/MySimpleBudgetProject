@@ -1,12 +1,9 @@
 package com.omalleyland.mysimplebudget;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -29,12 +26,10 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
 
     private SharedPreferences prefs;
 
-    private Menu menu;
+    private Menu        menu;
     private Spinner     spCategorySpinner;
     private Spinner     spStoreSpinner;
     private EditText    etDebitAmount;
-
-    private ProgressDialog processingLoginDialog;
 
     private String className;
     private String validationServer;
@@ -138,7 +133,6 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        long userId;
         switch (item.getItemId()) {
             case R.id.action_create_category:
                 startActivityForResult(new Intent(MainActivity.this, CreateCategory.class), Common.CREATE_CATEGORY_RESULT_CODE);
@@ -159,10 +153,10 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String userName = "";
+        String userName;
 
         if(requestCode == Common.LOGIN_RESULT_CODE) {
-            String passwordHash = "";
+            String passwordHash;
             Log.v(className, "Login Activity Result :: " + Integer.toString(resultCode));
 
             if(resultCode == Common.LOGIN_SUCCESSFUL) {
@@ -182,7 +176,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
 
         }
         else if(requestCode == Common.PREFERENCE_RESULT_CODE) {
-            String password = "";
+            String password;
 
             //This will always be RESULT_CANCELED since the back button is the only way to exit
             Log.v(className, "Preference Activity Result :: " + Integer.toString(resultCode));
@@ -267,7 +261,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             Log.d(className, "Selected Category Index " + Integer.toString(position) + " :: ID = " + Long.toString(id));
 
             if(position > 0) {
-                Log.d(className, "Selected Category(" + Integer.toString(position) + ") = " + ((Category)adapterView.getSelectedItem()).toString());
+                Log.d(className, "Selected Category(" + Integer.toString(position) + ") = " + (adapterView.getSelectedItem()).toString());
             }
             else {
                 Log.d(className, "<SELECT CATEGORY> Item(0) Selected");
@@ -305,7 +299,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             Log.d(className, "Selected Store Index " + Integer.toString(position) + " :: ID = " + Long.toString(id));
 
             if(position > 0) {
-                Log.d(className, "Selected Store(" + Integer.toString(position) + ") = " + ((Store)adapterView.getSelectedItem()).toString());
+                Log.d(className, "Selected Store(" + Integer.toString(position) + ") = " + (adapterView.getSelectedItem()).toString());
             }
             else {
                 Log.d(className, "<SELECT STORE> Item(0) Selected");
@@ -342,7 +336,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
     public void processLoginResult(int resultCode, String passwordHash) {
         Log.d(className, "Processing Login Result :: resultCode = " + Integer.toString(resultCode) + " :: " + passwordHash);
         if(resultCode == RESULT_OK || resultCode == Common.LOGIN_SUCCESSFUL) {
-            String userName = "";
+            String userName;
             Log.d(className, "Login Successful :: resultCode = " + Integer.toString(resultCode));
             userName = prefs.getString(Common.USER_NAME_PREFERENCE, "");
             Log.d(className, "User(" + userName + ") Token = " + passwordHash);

@@ -5,13 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by omal310371 on 6/7/13.
@@ -21,24 +16,12 @@ public class CategoryDBInterface {
     private final Context context;
     private final String className;
     private DBHelper dbHelper;
-    private SQLiteDatabase db;
 
     public CategoryDBInterface(Context ctx) {
         className = getClass().toString();
         Log.v(className, "CategoryDBInterface(Context) Constructor");
         this.context = ctx;
         dbHelper = new DBHelper(this.context);
-    }
-
-    private void openDB() throws SQLException {
-        Log.v(className, "Opening Database");
-        db = dbHelper.getWritableDatabase();
-    }
-
-    private void closeDB() {
-        Log.v(className, "Closing Database");
-        dbHelper.close();
-        db = null;
     }
 
     private Category cursorToCategory(Cursor cursor) {
@@ -54,6 +37,7 @@ public class CategoryDBInterface {
     }
 
     public long addCategory(Category category) {
+        SQLiteDatabase db;
         long insertId = -1;
         Log.d(className, "Adding Category To Database :: id = " + Integer.toString(category.getID()) +
                             ", name = " + category.getCategoryName() +
@@ -61,7 +45,7 @@ public class CategoryDBInterface {
                             ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
                             ", activeStatus = " + Integer.toString(category.getActiveStatus()));
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             if(category.getID() > -1) {
                 values.put(Common.colCATEGORY_ID, category.getID());
@@ -75,36 +59,38 @@ public class CategoryDBInterface {
             Log.v(className, "Inserting into Category Table");
             insertId = db.insert(Common.tblCATEGORIES, null, values);
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.e(className, "Exception Adding Category :: name = '" + category.getCategoryName() + "' :: " + e.getMessage());
         }
 
-        closeDB();
+        dbHelper.close();
         Log.d(className, "CategoryID from Insert = " + Long.toString(insertId));
         return insertId;
     }
 
     public void deleteCategory(Category category) {
+        SQLiteDatabase db;
         Log.d(className, "Deleting Category From Database :: id = " + Integer.toString(category.getID()) +
                             ", name = " + category.getCategoryName() +
                             ", serverID = " + Integer.toString(category.getServerID()) +
                             ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
                             ", activeStatus = " + Integer.toString(category.getActiveStatus()));
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Log.v(className, "Performing Delete From Category Table");
             db.delete(Common.tblCATEGORIES, Common.colCATEGORY_NAME + "=?", new String[] { category.getCategoryName() });
         }
         catch (Exception e) {
             Log.e(className, "Exception Removing Category :: name = '" + category.getCategoryName() + "' :: " + e.getMessage());
         }
-        closeDB();
+        dbHelper.close();
     }
 
     public Category getCategory(int id) {
+        SQLiteDatabase db;
         Category category = new Category();
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Category by ID = " + Integer.toString(id));
             Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_ID + " = " + id, null, null, null, null);
             if(cursor.getCount() == 1) {
@@ -122,19 +108,19 @@ public class CategoryDBInterface {
             }
             cursor.close();
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.d(className, "Exception Getting Category By categoryID :: " + e.getMessage());
         }
 
-        closeDB();
-
+        dbHelper.close();
         return category;
     }
 
     public Category getCategory(String categoryName) {
+        SQLiteDatabase db;
         Category category = new Category();
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Category by Name = " + categoryName);
             Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_NAME + " = '" + categoryName + "'", null, null, null, null);
             if(cursor.getCount()== 1) {
@@ -152,21 +138,20 @@ public class CategoryDBInterface {
             }
             cursor.close();
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.d(className, "Exception Getting Category By Name :: " + e.getMessage());
         }
-
-        closeDB();
-
+        dbHelper.close();
         return category;
     }
 
     public List<Category> getAllCategories() {
+        SQLiteDatabase db;
         List<Category> categoryList = new ArrayList<Category>();
         Category category;
         Log.v(className, "Querying List of All Categories");
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL,null,null,null,null,Common.colCATEGORY_NAME);
             Log.d(className, "Number of Category Records = " + Integer.toString(cursor.getCount()));
             if(cursor.moveToFirst()) {
@@ -182,11 +167,83 @@ public class CategoryDBInterface {
             }
             Log.d(className, "Category List Populated :: Size = " + Integer.toString(categoryList.size()));
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.e(className, "Exception Querying Category List :: " + e.getMessage());
         }
-        closeDB();
+        dbHelper.close();
         return categoryList;
+    }
+
+    public List<Category> getCategoryUpdates() {
+        SQLiteDatabase db;
+        List<Category> categoryList = new ArrayList<Category>();
+        String whereClause = Common.colCATEGORY_SYNC_STATUS + " IN (?,?)";
+        String[] whereArgs = {Integer.toString(Common.SYNC_STATUS_NEW), Integer.toString(Common.SYNC_STATUS_UPDATED)};
+
+        Category category;
+        Log.v(className, "Querying List of All Categories To Post to Server");
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, whereClause, whereArgs, null, null, Common.colCATEGORY_SYNC_STATUS);
+            Log.d(className, "Number of Category Records = " + Integer.toString(cursor.getCount()));
+            if(cursor.moveToFirst()) {
+                do {
+                    category = cursorToCategory(cursor);
+                    categoryList.add(category);
+                    Log.d(className, "Category Record Returned :: id = " + Integer.toString(category.getID()) +
+                            ", name = " + category.getCategoryName() +
+                            ", serverID = " + Integer.toString(category.getServerID()) +
+                            ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
+                            ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                } while (cursor.moveToNext());
+            }
+            Log.d(className, "Category List Populated :: Size = " + Integer.toString(categoryList.size()));
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Querying Category List :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return categoryList;
+    }
+
+    //Update SQLite Category Records based on List<Categories>
+    public boolean updateCategoryRecords(List<Category> updatedCategories, int syncStatus) {
+        //For each record in the List<Category>, update SQLite
+        SQLiteDatabase db;
+        boolean result = false;
+        int updatedRecords = 0;
+        String whereClause = Common.colCATEGORY_NAME + " = ?";
+        String[] whereArgs;
+        ContentValues values = new ContentValues();
+
+        Log.v(className, "Updating Categories with Values from List");
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            for(Category category : updatedCategories) {
+                values.clear();
+                values.put(Common.colCATEGORY_ID, category.getID());
+                values.put(Common.colCATEGORY_NAME, category.getCategoryName());
+                values.put(Common.colCATEGORY_SERVER_ID, category.getServerID());
+                values.put(Common.colCATEGORY_SYNC_STATUS, syncStatus);
+                values.put(Common.colCATEGORY_ACTIVE_STATUS, category.getActiveStatus());
+                whereArgs = new String[]{category.getCategoryName()};
+                Log.d(className, "Updating Category Record :: id = " + Integer.toString(category.getID()) +
+                        ", name = " + category.getCategoryName() +
+                        ", serverID = " + Integer.toString(category.getServerID()) +
+                        ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
+                        ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                updatedRecords = updatedRecords + db.update(Common.tblCATEGORIES, values, whereClause, whereArgs);
+            }
+            Log.d(className, "Number of Category Records = " + Integer.toString(updatedRecords));
+            result = true;
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Updating Categories from Server :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return result;
     }
 }
 

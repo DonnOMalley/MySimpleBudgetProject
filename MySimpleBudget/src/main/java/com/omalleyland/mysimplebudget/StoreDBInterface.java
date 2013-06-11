@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,6 @@ public class StoreDBInterface {
 
     private final Context context;
     private DBHelper dbHelper;
-    private SQLiteDatabase db;
     private String className;
 
     public StoreDBInterface(Context ctx) {
@@ -25,17 +23,6 @@ public class StoreDBInterface {
         Log.v(className, "StoreDB(Context) Constructor");
         this.context = ctx;
         dbHelper = new DBHelper(this.context);
-    }
-
-    private void openDB() throws SQLException {
-        Log.v(className, "Opening Database");
-        db = dbHelper.getWritableDatabase();
-    }
-
-    private void closeDB() {
-        Log.v(className, "Closing Database");
-        dbHelper.close();
-        db = null;
     }
 
     private Store cursorToStore(Cursor cursor) {
@@ -50,6 +37,7 @@ public class StoreDBInterface {
     }
 
     public long addStore(Store store) {
+        SQLiteDatabase db;
         long insertId = -1;
         Log.d(className, "Adding Store To Database :: id = " + Integer.toString(store.getID()) +
                 ", name = " + store.getStoreName() +
@@ -57,7 +45,7 @@ public class StoreDBInterface {
                 ", syncStatus = " + Integer.toString(store.getSyncStatus()) +
                 ", activeStatus = " + Integer.toString(store.getActiveStatus()));
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             if(store.getID() > -1) {
                 values.put(Common.colSTORE_ID, store.getID());
@@ -71,36 +59,38 @@ public class StoreDBInterface {
             Log.v(className, "Inserting into Store Table");
             insertId = db.insert(Common.tblSTORES, null, values);
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.e(className, "Exception Adding Store :: name = '" + store.getStoreName() + "' :: " + e.getMessage());
         }
 
-        closeDB();
+        dbHelper.close();
         Log.d(className, "StoreID from Insert = " + Long.toString(insertId));
         return insertId;
     }
 
     public void deleteStore(Store store) {
+        SQLiteDatabase db;
         Log.d(className, "Deleting Store From Database :: id = " + Integer.toString(store.getID()) +
                 ", name = " + store.getStoreName() +
                 ", serverID = " + Integer.toString(store.getServerID()) +
                 ", syncStatus = " + Integer.toString(store.getSyncStatus()) +
                 ", activeStatus = " + Integer.toString(store.getActiveStatus()));
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Log.v(className, "Performing Delete From Store Table");
             db.delete(Common.tblSTORES, Common.colSTORE_NAME + "=?", new String[] { store.getStoreName() });
         }
         catch (Exception e) {
             Log.e(className, "Exception Removing Store :: name = '" + store.getStoreName() + "' :: " + e.getMessage());
         }
-        closeDB();
+        dbHelper.close();
     }
 
     public Store getStore(int id) {
+        SQLiteDatabase db;
         Store store = new Store();
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Store by ID = " + Integer.toString(id));
             Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_ID + " = " + id, null, null, null, null);
             if(cursor.getCount() == 1) {
@@ -118,19 +108,20 @@ public class StoreDBInterface {
             }
             cursor.close();
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.d(className, "Exception Getting Store By id :: " + e.getMessage());
         }
 
-        closeDB();
+        dbHelper.close();
 
         return store;
     }
 
     public Store getStore(String storeName) {
+        SQLiteDatabase db;
         Store store = new Store();
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Store by Name = " + storeName);
             Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_NAME + " = '" + storeName + "'", null, null, null, null);
             if(cursor.getCount() == 1) {
@@ -148,21 +139,22 @@ public class StoreDBInterface {
             }
             cursor.close();
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.d(className, "Exception Getting Store By Name :: " + e.getMessage());
         }
 
-        closeDB();
+        dbHelper.close();
 
         return store;
     }
 
     public List<Store> getAllStores() {
+        SQLiteDatabase db;
         List<Store> storeList = new ArrayList<Store>();
         Store store;
         Log.v(className, "Querying List of All Stores");
         try {
-            openDB();
+            db = dbHelper.getWritableDatabase();
             Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, null, null, null, null, Common.colSTORE_NAME);
             Log.d(className, "Number of Store Records = " + Integer.toString(cursor.getCount()));
             if(cursor.moveToFirst()) {
@@ -178,11 +170,83 @@ public class StoreDBInterface {
             }
             Log.d(className, "Store List Populated :: Size = " + Integer.toString(storeList.size()));
         }
-        catch (SQLException e) {
+        catch (Exception e) {
             Log.e(className, "Exception Querying Store List :: " + e.getMessage());
         }
-        closeDB();
+        dbHelper.close();
         return storeList;
+    }
+
+    public List<Store> getStoreUpdates() {
+        SQLiteDatabase db;
+        List<Store> storeList = new ArrayList<Store>();
+        String whereClause = Common.colSTORE_SYNC_STATUS + " IN (?,?)";
+        String[] whereArgs = {Integer.toString(Common.SYNC_STATUS_NEW), Integer.toString(Common.SYNC_STATUS_UPDATED)};
+
+        Store store;
+        Log.v(className, "Querying List of All Stores To Post to Server");
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, whereClause, whereArgs, null, null, Common.colSTORE_SYNC_STATUS);
+            Log.d(className, "Number of Store Records = " + Integer.toString(cursor.getCount()));
+            if(cursor.moveToFirst()) {
+                do {
+                    store = cursorToStore(cursor);
+                    storeList.add(store);
+                    Log.d(className, "Store Record Returned :: id = " + Integer.toString(store.getID()) +
+                            ", name = " + store.getStoreName() +
+                            ", serverID = " + Integer.toString(store.getServerID()) +
+                            ", syncStatus = " + Integer.toString(store.getSyncStatus()) +
+                            ", activeStatus = " + Integer.toString(store.getActiveStatus()));
+                } while (cursor.moveToNext());
+            }
+            Log.d(className, "Store List Populated :: Size = " + Integer.toString(storeList.size()));
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Querying Store List :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return storeList;
+    }
+
+    //Update SQLite Store Records based on List<Stores>
+    public boolean updateStoreRecords(List<Store> updatedStores, int syncStatus) {
+        //For each record in the List<Store>, update SQLite
+        SQLiteDatabase db;
+        boolean result = false;
+        int updatedRecords = 0;
+        String whereClause = Common.colSTORE_NAME + " = ?";
+        String[] whereArgs;
+        ContentValues values = new ContentValues();
+
+        Log.v(className, "Updating Stores with Values from List");
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            for(Store store : updatedStores) {
+                values.clear();
+                values.put(Common.colSTORE_ID, store.getID());
+                values.put(Common.colSTORE_NAME, store.getStoreName());
+                values.put(Common.colSTORE_SERVER_ID, store.getServerID());
+                values.put(Common.colSTORE_SYNC_STATUS, syncStatus);
+                values.put(Common.colSTORE_ACTIVE_STATUS, store.getActiveStatus());
+                whereArgs = new String[]{store.getStoreName()};
+                Log.d(className, "Updating Store Record :: id = " + Integer.toString(store.getID()) +
+                        ", name = " + store.getStoreName() +
+                        ", serverID = " + Integer.toString(store.getServerID()) +
+                        ", syncStatus = " + Integer.toString(store.getSyncStatus()) +
+                        ", activeStatus = " + Integer.toString(store.getActiveStatus()));
+                updatedRecords = updatedRecords + db.update(Common.tblSTORES, values, whereClause, whereArgs);
+            }
+            Log.d(className, "Number of Store Records = " + Integer.toString(updatedRecords));
+            result = true;
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Updating Stores from Server :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return result;
     }
 }
 

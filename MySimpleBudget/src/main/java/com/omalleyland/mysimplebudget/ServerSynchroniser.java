@@ -6,8 +6,15 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by omal310371 on 6/9/13.
@@ -65,6 +72,11 @@ public class ServerSynchroniser {
 
         @Override
         protected ArrayList<Boolean> doInBackground(Void... voids) {
+            CategoryDBInterface categoryDBInterface = new CategoryDBInterface(context);
+            StoreDBInterface storeDBInterface = new StoreDBInterface(context);
+
+            List<Category> categoryList;
+            List<Store> storeList;
 
             ArrayList<Boolean> updateUIList = new ArrayList<Boolean>();
             updateUIList.add(Common.CATEGORY_UI_CONTROL_INDEX, false);  //initialize Category failure
@@ -74,6 +86,22 @@ public class ServerSynchroniser {
 
                 publishProgress("Processing Categories...");
                 Thread.sleep(2000);
+                categoryList = categoryDBInterface.getCategoryUpdates();
+
+                JSONArray jsonArray = new JSONArray(categoryList);
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("USERNAME", jsonArray);
+
+                StringEntity stringEntity = new StringEntity(jsonObject.toString());
+
+                DefaultHttpClient httpClient = new DefaultHttpClient();
+                HttpPost httpPost = new HttpPost("http://server address");
+
+                httpPost.setEntity(stringEntity);
+                httpPost.setHeader("Accept", "application/json");
+                httpPost.setHeader("content-type", "application/json");
+                String responseString = EntityUtils.toString(httpClient.execute(httpPost).getEntity());
 
                 //Create JSON To bulk insert any 'new' categories - Build 'Values' into json so PHP doesn't have to do any heavy lifting.
                 //Create JSON To send all 'Updates' to the server -- Can't bulk update but build good data structure for php to process.
@@ -84,9 +112,11 @@ public class ServerSynchroniser {
                 //Set Category sync preference date time\
 
                 updateUIList.set(Common.CATEGORY_UI_CONTROL_INDEX, true);
-                publishProgress("Done" + '\n' + "Processing Stores...");
 
+                publishProgress("Done" + '\n' + "Processing Stores...");
                 Thread.sleep(2000);
+                storeList = storeDBInterface.getStoreUpdates();
+
 
                 //Create JSON To bulk insert any 'new' stores - Build 'Values' into json so PHP doesn't have to do any heavy lifting.
                 //Create JSON To send all 'Updates' to the server -- Can't bulk update but build good data structure for php to process.
