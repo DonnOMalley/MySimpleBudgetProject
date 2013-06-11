@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MySimpleBudget</string>
+
+    <string name="action_preferences">Preferences</string>
+    <string name="action_logout">Log Out</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_add_user">Add User</string>
+    <string name="action_user_lookup">User Lookup</string>
+    <string name="action_user_remove">Remove User</string>
+    <string name="action_upload_debits">Upload Debits</string>
+    <string name="action_create_category">Create Category</string>
+    <string name="action_create_store">Create Store</string>
+
+    <string name="preference_title">Preferences</string>
+    <string name="preference_summary">Global Application Settings</string>
+
+    <string name="preference_work_offline">Work Offline</string>
+    <string name="preference_work_offline_summary">Connect to MySimpleBudget Server by User</string>
+
+    <string name="preference_login_title">Login Settings</string>
+    <string name="preference_login_summary">Authentication Server and Login Credentials</string>
+    <string name="preference_login_server_title">Validation Server</string>
+    <string name="preference_login_server_summary">Web server where validation requests are made</string>
+    <string name="preference_login_save_title">Save Login Credentials</string>
+    <string name="preference_login_save_summary">Enable/Disable Credential Storage</string>
+        <string name="preference_login_username_title">Username</string>
+        <string name="preference_login_username_summary">Username registered with MySimpleBudget Server</string>
+        <string name="preference_login_password_title">Password</string>
+        <string name="preference_login_password_summary">Password associated with Username</string>
+<item name="category_spinner_prompt" type="id">Select a Category</item></resources>

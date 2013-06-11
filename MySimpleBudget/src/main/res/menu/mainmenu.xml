@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_login_preferences"
+          android:title="@string/action_preferences"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_logout"
+          android:title="@string/action_logout"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_login"
+          android:title="@string/action_sign_in_short"
+          android:visible="false"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_upload_debits"
+          android:title="@string/action_upload_debits"
+          android:visible="true"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_create_store"
+          android:title="@string/action_create_store"
+          android:visible="true"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_create_category"
+          android:title="@string/action_create_category"
+          android:visible="true"
+          android:showAsAction="never" />
+</menu>

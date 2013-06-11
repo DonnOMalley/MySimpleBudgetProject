@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.omalleyland.mysimplebudget"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="16" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme" >
+
+        <activity
+                android:name="com.omalleyland.mysimplebudget.MainActivity"
+                android:label="@string/app_name"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+                android:windowSoftInputMode="adjustResize|stateVisible" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity
+                android:name="com.omalleyland.mysimplebudget.LoginActivity"
+                android:label="@string/app_name"
+                android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
+
+        <activity android:name="Preferences"></activity>
+        <activity android:name=".CreateStore"/>
+        <activity android:name=".CreateCategory"/>
+    </application>
+
+</manifest>
