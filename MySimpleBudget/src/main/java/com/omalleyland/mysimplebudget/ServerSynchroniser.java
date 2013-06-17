@@ -139,30 +139,34 @@ public class ServerSynchroniser {
                         HttpConnectionParams.setSoTimeout(httpParams, 5000);
 
                         CategoryDBInterface categoryDBInterface = new CategoryDBInterface(context);
-//                        categoryList = categoryDBInterface.getCategoryUpdates();
-//                        if(categoryList.size() > 0) {
-//                            JSONObject jsonObject = new JSONObject();
-//                            JSONArray jsonArray = new JSONArray();
-//                            for(int i = 0; i < categoryList.size(); i++) {
-//                                Category category = categoryList.get(i);
-//                                JSONObject categoryJSON = new JSONObject(category.getMap());
-//                                jsonArray.put(categoryJSON);
-//                            }
-//                            ////////////////////////////////////////////////////////////////////////////
-//                            // jsonObject.put("post", jsonArray);
-//
-//                            StringEntity stringEntity = new StringEntity(jsonObject.toString());
-//
-//                            /////////
-//                            httpPost = new HttpPost(serverAddress.concat(syncPage));
-//                            httpPost.setEntity(stringEntity);
-//                            httpPost.setHeader("Accept", "application/json");
-//                            httpPost.setHeader("content-type", "application/json");
-//                            httpResponse = EntityUtils.toString(httpClient.execute(httpPost).getEntity());
-//                            Toast.makeText(context, httpResponse, Toast.LENGTH_LONG).show();
-//                        }
+                        categoryList = categoryDBInterface.getCategoryUpdates();
+                        if(categoryList.size() > 0) {
+                            JSONObject jsonObject = new JSONObject();
+                            JSONArray jsonArray = new JSONArray();
+                            jsonObject.put("type", "post");
+                            jsonObject.put("user", userName);
+                            for(int i = 0; i < categoryList.size(); i++) {
+                                Category category = categoryList.get(i);
+                                JSONObject categoryJSON = new JSONObject(category.getMap());
+                                jsonArray.put(categoryJSON);
+                            }
+                            jsonObject.put("categoryArray", jsonArray);
+                            Log.d(className, jsonObject.toString());
 
-//                        if(httpResponse.length() > 0) {
+                            httpPost = new HttpPost(syncPage);
+                            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+                            nameValuePairs.add(new BasicNameValuePair("username", userName));
+                            nameValuePairs.add(new BasicNameValuePair("password", password));
+                            nameValuePairs.add(new BasicNameValuePair("json", jsonObject.toString()));
+                            Log.d(className, "Name Value Pairs built : ".concat(Integer.toString(nameValuePairs.size())));
+                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                            Log.d(className, "Executing HTTP Request To :: ".concat(syncPage));
+                            HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
+                            httpResponse = EntityUtils.toString(httpEntity);
+                        }
+
+                        if(httpResponse.length() > 0) {
+                            Log.d(className, "http Post Response = ".concat(httpResponse.toString()));
 //                            httpResponseJSON = new JSONObject(httpResponse);
 //
 //                            //If http response = 'success'
@@ -173,7 +177,10 @@ public class ServerSynchroniser {
 //                                //For each category, update category in local SQLite DB
 //                                categoryDBInterface.updateCategoryRecords(categoryList, Common.SYNC_STATUS_PENDING_VERIFY);
 //                            }
-//                        }
+                        }
+                        else {
+                            Log.d(className, "Http Post Empty Response");
+                        }
 
                         /*
                             If Http Post was sent and a result was returned, get data from server

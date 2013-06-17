@@ -117,6 +117,7 @@ public class Category {
     public Map<String, String> getMap() {
         Map<String, String> categoryMap = new HashMap<String, String>();
         categoryMap.put(Common.colCATEGORY_ID, Integer.toString(this.id));
+        categoryMap.put(Common.colCATEGORY_NAME, this.categoryName);
         categoryMap.put(Common.colCATEGORY_ACTIVE_STATUS, Integer.toString(this.activeStatus));
 
         return categoryMap;
