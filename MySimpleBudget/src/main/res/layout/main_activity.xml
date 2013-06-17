@@ -52,7 +52,7 @@
                     android:id="@+id/datePicker"
                     android:layout_below="@+id/spinnerStore"
                     android:paddingTop="5dp"
-                    android:spinnersShown="false"
+                    android:spinnersShown="true"
                     android:clickable="true"
                     android:layout_centerHorizontal="true"
                     android:calendarViewShown="false"/>

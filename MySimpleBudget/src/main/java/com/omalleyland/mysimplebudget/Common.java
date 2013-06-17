@@ -3,6 +3,7 @@ package com.omalleyland.mysimplebudget;
 import android.util.Log;
 
 import java.net.PortUnreachableException;
+import java.security.PublicKey;
 
 /**
  * Created by omal310371 on 6/6/13.
@@ -118,10 +119,12 @@ public class Common {
                                                                             colDEBIT_ACTIVE_STATUS + " integer NOT NULL);";
     public static final String      DROP_DEBIT_TABLE                    = "DROP TABLE IF EXISTS " + tblDebits;
 
-    public static final char        NEW_LINE                            = '\n';
-
     /* Shared Preference Keys - Matches Preferences Activity UI Object Names */
-    public static final String      VALIDATION_SERVER_PREFERENCE        = "preferenceValidationServer";
+    public static final String      SERVER_ADDRESS_PREFERENCE           = "preferenceServerAddress";
+    public static final String      SERVER_LOGIN_ADDRESS_PREFERENCE     = "preferenceServerLoginAddress";
+    public static final String      SERVER_CATEGORY_ADDRESS_PREFERENCE  = "preferenceServerCategoryAddress";
+    public static final String      SERVER_STORE_ADDRESS_PREFERENCE     = "preferenceServerStoreAddress";
+    public static final String      SERVER_DEBIT_ADDRESS_PREFERENCE     = "preferenceServerDebitAddress";
     public static final String      USER_NAME_PREFERENCE                = "preferenceLoginUserName";
     public static final String      PASSWORD_PREFERENCE                 = "preferenceLoginPassword";
 
@@ -153,4 +156,14 @@ public class Common {
     /* Arraylist indexes for updating UI Controls */
     public static final int         CATEGORY_UI_CONTROL_INDEX           = 0;
     public static final int         STORE_UI_CONTROL_INDEX              = 0;
+
+    /* Miscellaneous helper variables */
+    public static final char        NEW_LINE                            = '\n';
+
+    public static final String      LAST_CATEGORY_SYNC_PREFERENCE       = "lastCategorySync";
+    public static final String      LAST_STORE_SYNC_PREFERENCE          = "lastStoreSync";
+    public static final String      LAST_DEBIT_SYNC_PREFERENCE          = "lastDebitSync";
+    public static final String      HTTP_RESPONSE_RESULT                = "result";
+    public static final String      HTTP_RESPONSE_RESULT_SUCCESS        = "success";
+    public static final String      HTTP_RESPONSE_TIMESTAMP             = "timestamp";
 }

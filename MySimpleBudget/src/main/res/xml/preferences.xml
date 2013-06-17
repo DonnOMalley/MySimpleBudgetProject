@@ -4,32 +4,40 @@
                   android:title="@string/preference_title"
                   android:summary="@string/preference_summary">
 
-    <CheckBoxPreference android:key="preferenceWorkOffline"
-                        android:title="@string/preference_work_offline"
-                        android:summary="@string/preference_work_offline_summary" />
+    <PreferenceScreen android:title="@string/preference_screen_server_info"
+                      android:summary="@string/preference_screen_server_info_summary">
 
-    <PreferenceScreen android:title="@string/preference_login_title"
-                      android:summary="@string/preference_login_summary">
+        <EditTextPreference android:key="preferenceServerAddress"
+                            android:title="@string/preference_server_address_title"
+                            android:summary="@string/preference_server_address_summary" />
 
-        <EditTextPreference android:key="preferenceValidationServer"
-                            android:title="@string/preference_login_server_title"
-                            android:summary="@string/preference_login_server_summary" />
+        <EditTextPreference android:key="preferenceServerLoginAddress"
+                            android:title="@string/preference_login_address_title"
+                            android:summary="@string/preference_login_address_summary" />
 
-        <CheckBoxPreference android:key="preferenceLoginSaveCredentials"
-                            android:title="@string/preference_login_save_title"
-                            android:summary="@string/preference_login_save_summary" />
+        <EditTextPreference android:key="preferenceServerCategoryAddress"
+                            android:title="@string/preference_category_address_title"
+                            android:summary="@string/preference_category_address_summary" />
+
+        <EditTextPreference android:key="preferenceServerStoreAddress"
+                            android:title="@string/preference_store_address_title"
+                            android:summary="@string/preference_store_address_summary" />
+
+        <EditTextPreference android:key="preferenceServerDebitAddress"
+                            android:title="@string/preference_debit_address_title"
+                            android:summary="@string/preference_debit_address_summary" />
+    </PreferenceScreen>
+
+    <PreferenceScreen android:title="@string/preference_screen_login_info"
+                      android:summary="@string/preference_screen_login_info_summary">
 
         <EditTextPreference android:key="preferenceLoginUserName"
                             android:title="@string/preference_login_username_title"
-                            android:summary="@string/preference_login_username_summary"
-                            android:dependency="preferenceLoginSaveCredentials" />
+                            android:summary="@string/preference_login_username_summary" />
 
         <EditTextPreference android:key="preferenceLoginPassword"
                             android:password="true"
                             android:title="@string/preference_login_password_title"
-                            android:summary="@string/preference_login_password_summary"
-                            android:dependency="preferenceLoginSaveCredentials" />
-
+                            android:summary="@string/preference_login_password_summary" />
     </PreferenceScreen>
-
 </PreferenceScreen>

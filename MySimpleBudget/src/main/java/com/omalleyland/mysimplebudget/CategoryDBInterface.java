@@ -221,20 +221,33 @@ public class CategoryDBInterface {
         try {
             db = dbHelper.getWritableDatabase();
 
+            Category existingCategory;
             for(Category category : updatedCategories) {
-                values.clear();
-                values.put(Common.colCATEGORY_ID, category.getID());
-                values.put(Common.colCATEGORY_NAME, category.getCategoryName());
-                values.put(Common.colCATEGORY_SERVER_ID, category.getServerID());
-                values.put(Common.colCATEGORY_SYNC_STATUS, syncStatus);
-                values.put(Common.colCATEGORY_ACTIVE_STATUS, category.getActiveStatus());
-                whereArgs = new String[]{category.getCategoryName()};
-                Log.d(className, "Updating Category Record :: id = " + Integer.toString(category.getID()) +
-                        ", name = " + category.getCategoryName() +
-                        ", serverID = " + Integer.toString(category.getServerID()) +
-                        ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                        ", activeStatus = " + Integer.toString(category.getActiveStatus()));
-                updatedRecords = updatedRecords + db.update(Common.tblCATEGORIES, values, whereClause, whereArgs);
+
+                //Check for category to exist,
+                //  if exists, update
+                //  else add
+                existingCategory = getCategory(category.getCategoryName());
+                if(existingCategory!=null) {
+                    values.clear();
+                    values.put(Common.colCATEGORY_ID, category.getID());
+                    values.put(Common.colCATEGORY_NAME, category.getCategoryName());
+                    values.put(Common.colCATEGORY_SERVER_ID, category.getServerID());
+                    values.put(Common.colCATEGORY_SYNC_STATUS, syncStatus);
+                    values.put(Common.colCATEGORY_ACTIVE_STATUS, category.getActiveStatus());
+                    whereArgs = new String[]{category.getCategoryName()};
+                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(category.getID()) +
+                            ", name = " + category.getCategoryName() +
+                            ", serverID = " + Integer.toString(category.getServerID()) +
+                            ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
+                            ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                    updatedRecords = updatedRecords + db.update(Common.tblCATEGORIES, values, whereClause, whereArgs);
+                }
+                else {
+                    if(addCategory(category) > -1) {
+                        updatedRecords += 1;
+                    }
+                }
             }
             Log.d(className, "Number of Category Records = " + Integer.toString(updatedRecords));
             result = true;

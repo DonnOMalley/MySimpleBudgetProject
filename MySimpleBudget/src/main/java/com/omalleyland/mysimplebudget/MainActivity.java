@@ -12,11 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,13 +33,19 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
     private Menu        menu;
     private Spinner     spCategorySpinner;
     private Spinner     spStoreSpinner;
+    private DatePicker  dpDebitDate;
     private EditText    etDebitAmount;
+    private EditText    etComment;
+    private Button      btnPostDebit;
 
     private String className;
-    private String validationServer;
+    private String serverAddress;
+    private String loginValidationPage;
 
     private ValidateLogin validateLogin;
     private ServerSynchroniser serverSynchroniser;
+
+    //TODO : Add async tasks for interacting with local SQLite Database.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +62,12 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         prefs               = PreferenceManager.getDefaultSharedPreferences(this);
         spCategorySpinner   = (Spinner)findViewById(R.id.spinnerCategory);
         spStoreSpinner      = (Spinner)findViewById(R.id.spinnerStore);
+        dpDebitDate         = (DatePicker)findViewById(R.id.datePicker);
         etDebitAmount       = (EditText)findViewById(R.id.etDebitAmount);
+        etComment           = (EditText)findViewById(R.id.editText2);
+        btnPostDebit        = (Button)findViewById(R.id.btnPostDebit);
 
+        btnPostDebit.setOnClickListener(new PostDebitClick(this, dpDebitDate, spCategorySpinner, spStoreSpinner, etDebitAmount, etComment));
         //Create UI Events
         etDebitAmount.addTextChangedListener(new CurrencyTextWatcher());
 
@@ -64,19 +78,25 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         //      Download data from Server to Local
         //  if login fails for any reason, work offline
 
-        this.validationServer   = prefs.getString(Common.VALIDATION_SERVER_PREFERENCE, "");
-        userName                = prefs.getString(Common.USER_NAME_PREFERENCE, "");
-        password                = prefs.getString(Common.PASSWORD_PREFERENCE, "");
+        Log.d(className, "Assigning Preferences to Local Variables");
+        this.serverAddress          = prefs.getString(Common.SERVER_ADDRESS_PREFERENCE, "");
+        this.loginValidationPage    = prefs.getString(Common.SERVER_LOGIN_ADDRESS_PREFERENCE, "");
+        userName                    = prefs.getString(Common.USER_NAME_PREFERENCE, "");
+        password                    = prefs.getString(Common.PASSWORD_PREFERENCE, "");
+        Log.d(className, "Preferences Assigned to Local Variables");
 
         //Check Server/Login Information and react accordingly
-        if(this.validationServer.length() == 0) {
+        if((this.serverAddress.length() == 0) || (this.loginValidationPage.length() == 0)) {
             //Launch Preference Dialog
             Log.d(className, "Missing Server Information - Launching Preferences Activity");
             startActivityForResult(new Intent(this, Preferences.class), Common.PREFERENCE_RESULT_CODE);
         }
         else if(userName.length() > 0 && password.length() > 0) {
             Log.d(className, "Starting Async Login Attempt");
-            validateLogin = new ValidateLogin(this, this, validationServer, userName, password);
+            if(!this.serverAddress.endsWith("/")) {
+                this.serverAddress = this.serverAddress.concat("/");
+            }
+            validateLogin = new ValidateLogin(this, this, this.serverAddress.concat(this.loginValidationPage), userName, password);
             validateLogin.executeValidation();
         }
         else {
@@ -153,19 +173,27 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String userName;
+        String userName = "";
 
         if(requestCode == Common.LOGIN_RESULT_CODE) {
-            String passwordHash;
+            String passwordHash = "";
             Log.v(className, "Login Activity Result :: " + Integer.toString(resultCode));
 
             if(resultCode == Common.LOGIN_SUCCESSFUL) {
                 Log.d(className, "Login Successful");
-                userName = data.getStringExtra(Common.LOGIN_RESULT_USER_EXTRA);
-                passwordHash = data.getStringExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA);
+                if(data.hasExtra(Common.LOGIN_RESULT_USER_EXTRA)) {
+                    userName = data.getStringExtra(Common.LOGIN_RESULT_USER_EXTRA);
+                }
+                if(data.hasExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA)) {
+                    passwordHash = data.getStringExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA);
+                }
                 Log.d(className, "User(" + userName + ") Token = " + passwordHash);
 
                 synchroniseConfiguration();
+            }
+            else if(resultCode == Common.LOGIN_CONNECTION_ERROR) {
+                Log.d(className, "Login Connection Failed - Working Offline");
+                setTitle(Common.APPLICATION_NAME + " - OFFLINE");
             }
             else if(resultCode == Common.LOGIN_CANCELED) {
                 //User Pressed Back button to exit login application - Only occurs if Login Information is not saved.
@@ -181,11 +209,12 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             //This will always be RESULT_CANCELED since the back button is the only way to exit
             Log.v(className, "Preference Activity Result :: " + Integer.toString(resultCode));
             //Get Preferences and update variables accordingly
-            this.validationServer   = prefs.getString(Common.VALIDATION_SERVER_PREFERENCE, "");
-            userName                = prefs.getString(Common.USER_NAME_PREFERENCE, "");
-            password                = prefs.getString(Common.PASSWORD_PREFERENCE, "");
+            this.serverAddress          = prefs.getString(Common.SERVER_ADDRESS_PREFERENCE, "");
+            this.loginValidationPage    = prefs.getString(Common.SERVER_LOGIN_ADDRESS_PREFERENCE, "");
+            userName                    = prefs.getString(Common.USER_NAME_PREFERENCE, "");
+            password                    = prefs.getString(Common.PASSWORD_PREFERENCE, "");
 
-            if(this.validationServer.length() == 0) {
+            if((this.serverAddress.length() == 0) || (this.loginValidationPage.length() == 0)) {
                 Log.d(className, "Validation Server Missing - Application Exiting");
                 Toast.makeText(this, "VALIDATION SERVER STILL NOT ASSIGNED", Toast.LENGTH_LONG).show();
                 this.finish();
@@ -193,10 +222,10 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             else if(userName.length() > 0 && password.length() > 0) {
                 Log.d(className, "Starting Async Login Attempt");
                 if(validateLogin == null) {
-                    validateLogin = new ValidateLogin(this, this, this.validationServer, userName, password);
+                    validateLogin = new ValidateLogin(this, this, this.serverAddress.concat(this.loginValidationPage), userName, password);
                 }
                 else {
-                    validateLogin.setValidationServer(this.validationServer);
+                    validateLogin.setValidationServer(this.serverAddress.concat(this.loginValidationPage));
                     validateLogin.setUserName(userName);
                     validateLogin.setPassword(password);
                 }

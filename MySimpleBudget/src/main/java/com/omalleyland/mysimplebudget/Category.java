@@ -2,6 +2,13 @@ package com.omalleyland.mysimplebudget;
 
 import android.util.Log;
 
+import org.json.JSONObject;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Created by omal310371 on 6/7/13.
  */
@@ -105,6 +112,25 @@ public class Category {
 
     public int getActiveStatus() {
         return this.activeStatus;
+    }
+
+    public Map<String, String> getMap() {
+        Map<String, String> categoryMap = new HashMap<String, String>();
+        categoryMap.put(Common.colCATEGORY_ID, Integer.toString(this.id));
+        categoryMap.put(Common.colCATEGORY_ACTIVE_STATUS, Integer.toString(this.activeStatus));
+
+        return categoryMap;
+    }
+
+    public void JSONToObject(JSONObject jsonObject) {
+        try {
+            this.serverID = jsonObject.getInt("id");
+            this.categoryName = jsonObject.getString("name");
+            this.activeStatus = jsonObject.getInt("activeStatus");
+        }
+        catch (Exception e) {
+            //Do nothing for now
+        }
     }
 
     @Override

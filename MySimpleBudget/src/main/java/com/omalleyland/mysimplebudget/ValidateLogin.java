@@ -16,6 +16,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +151,9 @@ public class ValidateLogin {
         protected String doInBackground(Void... params) {
             Log.v(className, "Starting Background Login");
             HttpClient httpclient = new DefaultHttpClient();
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
+            HttpConnectionParams.setSoTimeout(httpParams, 5000);
 
             HttpPost httppost = new HttpPost(validationServer);
             String responseString = "";
@@ -163,6 +169,7 @@ public class ValidateLogin {
 
                 // Execute HTTP Post Request
                 Log.v(className, "Executing HTTP Post");
+                httppost.setParams(httpParams);
                 responseString = EntityUtils.toString(httpclient.execute(httppost).getEntity());
                 Log.v(className, "HTTP Response = " + responseString);
                 if(responseString.length() > 0) {

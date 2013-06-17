@@ -39,12 +39,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="873fd8e1-ce88-4d9f-9371-85d8a6e7ac19" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/PostDebitClick.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Category.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Category.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryDBInterface.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryDBInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/DBHelper.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/DBHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CreateCategory.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CreateCategory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/LoginActivity.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/LoginActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/MySimpleBudget.iml" afterPath="$PROJECT_DIR$/MySimpleBudget/MySimpleBudget.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudgetProject.iml" afterPath="$PROJECT_DIR$/MySimpleBudgetProject.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ServerSynchroniser.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ServerSynchroniser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/StoreDBInterface.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/StoreDBInterface.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ValidateLogin.java" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ValidateLogin.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/res/layout/main_activity.xml" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/res/layout/main_activity.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/res/xml/preferences.xml" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/res/xml/preferences.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MySimpleBudget/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/MySimpleBudget/src/main/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="MySimpleBudget.iws" />
@@ -68,24 +76,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint url="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Category.java" line="82" class="com.omalleyland.mysimplebudget.Category" package="com.omalleyland.mysimplebudget">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -122,6 +112,39 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/LoginActivity.java" line="138" class="com.omalleyland.mysimplebudget.LoginActivity" package="com.omalleyland.mysimplebudget">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/PostDebitClick.java" line="51" class="com.omalleyland.mysimplebudget.PostDebitClick" package="com.omalleyland.mysimplebudget">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -131,40 +154,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="CategoryDBInterface.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryDBInterface.java">
+      <file leaf-file-name="Common.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="216" column="27" selection-start="10444" selection-end="10444" vertical-scroll-proportion="0.0" vertical-offset="3604" max-vertical-offset="4335">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#6897#6907#0" expanded="true" />
-                <element signature="e#8415#8425#0" expanded="true" />
-              </folding>
+            <state line="19" column="36" selection-start="623" selection-end="623" vertical-scroll-proportion="0.0" vertical-offset="37" max-vertical-offset="2924">
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ServerSynchroniser.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ServerSynchroniser.java">
+      <file leaf-file-name="MainActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="86" column="60" selection-start="3115" selection-end="3115" vertical-scroll-proportion="0.0" vertical-offset="1127" max-vertical-offset="3230">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2821#2830#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="StoreDBInterface.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/StoreDBInterface.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="225" column="0" selection-start="9980" selection-end="10027" vertical-scroll-proportion="0.0" vertical-offset="3789" max-vertical-offset="4386">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#6418#6425#0" expanded="true" />
-                <element signature="e#7857#7864#0" expanded="true" />
-              </folding>
+            <state line="354" column="46" selection-start="15241" selection-end="15241" vertical-scroll-proportion="0.0" vertical-offset="5457" max-vertical-offset="7259">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -172,32 +175,51 @@
       <file leaf-file-name="ValidateLogin.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ValidateLogin.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="164" column="56" selection-start="6600" selection-end="6697" vertical-scroll-proportion="0.0" vertical-offset="1479" max-vertical-offset="2873">
+            <state line="162" column="0" selection-start="6442" selection-end="6442" vertical-scroll-proportion="0.0" vertical-offset="2261" max-vertical-offset="3315">
               <folding>
-                <element signature="method#ValidateLogin#2;class#ValidateLogin#0" expanded="false" />
-                <element signature="method#ValidateLogin#3;class#ValidateLogin#0" expanded="false" />
-                <element signature="method#setBackgroundProcessor#0;class#ValidateLogin#0" expanded="false" />
-                <element signature="method#setContext#0;class#ValidateLogin#0" expanded="false" />
-                <element signature="method#setUserName#0;class#ValidateLogin#0" expanded="false" />
-                <element signature="method#setPassword#0;class#ValidateLogin#0" expanded="false" />
+                <element signature="e#6574#6589#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Common.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java">
+      <file leaf-file-name="PostDebitClick.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/PostDebitClick.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="76" selection-start="939" selection-end="939" vertical-scroll-proportion="0.0" vertical-offset="357" max-vertical-offset="2754">
+            <state line="37" column="20" selection-start="1006" selection-end="1006" vertical-scroll-proportion="0.0" vertical-offset="459" max-vertical-offset="1207">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java">
+      <file leaf-file-name="CategoryDBInterface.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryDBInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="28" selection-start="69" selection-end="69" vertical-scroll-proportion="0.056951422" vertical-offset="0" max-vertical-offset="7123">
+            <state line="239" column="70" selection-start="11671" selection-end="11671" vertical-scroll-proportion="0.0" vertical-offset="3087" max-vertical-offset="4454">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ServerSynchroniser.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ServerSynchroniser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="149" column="31" selection-start="6023" selection-end="6023" vertical-scroll-proportion="0.0" vertical-offset="413" max-vertical-offset="5440">
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#3975#3984#0" expanded="true" />
+                <element signature="e#9036#9051#0" expanded="true" />
+                <element signature="e#10584#10594#0" expanded="true" />
+                <element signature="e#15238#15247#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Category.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Category.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="120" column="0" selection-start="3694" selection-end="3694" vertical-scroll-proportion="2.07489" vertical-offset="1450" max-vertical-offset="2380">
               <folding />
             </state>
           </provider>
@@ -258,22 +280,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Store.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CurrencyTextWatcher.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Preferences.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/IValidateLogin.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/res/values/strings_activity_login.xml" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/res/layout/main_activity.xml" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ProgressDlg.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ValidateLogin.java" />
         <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/IBackgroundProcessor.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/LoginActivity.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java" />
         <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/DBHelper.java" />
         <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/StoreDBInterface.java" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/build/res/all/debug/values/values.xml" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/res/xml/preferences.xml" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/LoginActivity.java" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ValidateLogin.java" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/res/layout/main_activity.xml" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/PostDebitClick.java" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CreateCategory.java" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java" />
+        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Category.java" />
         <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryDBInterface.java" />
         <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ServerSynchroniser.java" />
-        <option value="$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -313,6 +335,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -415,36 +438,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layout" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MySimpleBudget" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MySimpleBudgetProject" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="MySimpleBudget" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="java" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -455,28 +448,31 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="project.structure.last.edited" value="Project" />
     <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="project.structure.proportion" value="0.0" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="vcs.Git" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/GitHub/PortableGit_ca477551eeb4aea0e4ae9fcd3358bd96720bb5c8/cmd/git.exe" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="emulator-5554" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="Groovy.Shell.LastModule" value="MySimpleBudget" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_AVD" value="android_2_1" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
+    <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -670,6 +666,11 @@
       <workItem from="1370658844206" duration="75653000" />
       <workItem from="1370866203303" duration="620000" />
     </task>
+    <task id="LOCAL-00001" summary="Cleaned up Database code, added category and store sqlite code, stubbed out some synchronisation code and cleaned up a bunch of unused imports/redundant initializations and other misc warnings">
+      <created>1370980702006</created>
+      <updated>1370980702006</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -699,29 +700,29 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27091378" sideWeight="0.6732543" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27091378" sideWeight="0.6732543" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.7305644" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27220076" sideWeight="0.6732543" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3992095" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.884984" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24901186" sideWeight="0.685112" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Build Variants" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24903475" sideWeight="0.6732543" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3365282" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.8577075" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" x="16" y="142" width="1004" height="718" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5889328" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.48988286" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24901186" sideWeight="0.685112" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32870865" sideWeight="0.49946752" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24903475" sideWeight="0.6732543" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33546326" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4057508" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" x="16" y="142" width="1004" height="718" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32977587" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806325" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27854857" sideWeight="0.5974441" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806325" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27806452" sideWeight="0.5974441" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924226" sideWeight="0.6704417" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27854857" sideWeight="0.66347176" order="0" side_tool="true" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3135705" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="true" internal_type="SLIDING" type="FLOATING" visible="false" weight="0.32924226" sideWeight="0.6704417" order="7" side_tool="false" content_ui="tabs" x="639" y="196" width="617" height="939" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2773488" sideWeight="0.4110672" order="0" side_tool="true" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44515443" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24967825" sideWeight="0.14229248" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297062" sideWeight="0.6704417" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297062" sideWeight="0.6704417" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.8102767" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
@@ -789,178 +790,228 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/build/res/all/debug/xml/preferences.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="383" column="58" selection-start="16154" selection-end="16154" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
+        <state line="13" column="45" selection-start="761" selection-end="761" vertical-scroll-proportion="0.0" vertical-offset="62" max-vertical-offset="765">
+          <folding>
+            <element signature="e#914#956#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/build/res/all/debug/values/values.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="82" selection-start="1172" selection-end="1172" vertical-scroll-proportion="0.33263597" vertical-offset="181" max-vertical-offset="1156">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryArrayAdapter.java">
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="13" selection-start="209" selection-end="209" vertical-scroll-proportion="0.25511596" vertical-offset="0" max-vertical-offset="0">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#CategoryArrayAdapter#0;class#CategoryArrayAdapter#0" expanded="false" />
-          </folding>
+        <state line="19" column="83" selection-start="1439" selection-end="1439" vertical-scroll-proportion="0.34309623" vertical-offset="159" max-vertical-offset="901">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Preferences.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="13" selection-start="360" selection-end="360" vertical-scroll-proportion="0.25511596" vertical-offset="0" max-vertical-offset="0">
+        <state line="28" column="47" selection-start="953" selection-end="953" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="595">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Store.java">
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/res/xml/preferences.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="105" column="33" selection-start="3189" selection-end="3189" vertical-scroll-proportion="0.88540244" vertical-offset="0" max-vertical-offset="0">
+        <state line="32" column="0" selection-start="1890" selection-end="1890" vertical-scroll-proportion="0.0" vertical-offset="83" max-vertical-offset="816">
           <folding>
-            <element signature="method#Store#0;class#Store#0" expanded="false" />
-            <element signature="method#Store#1;class#Store#0" expanded="false" />
-            <element signature="method#Store#2;class#Store#0" expanded="false" />
-            <element signature="method#Store#3;class#Store#0" expanded="false" />
-            <element signature="method#Store#4;class#Store#0" expanded="false" />
-            <element signature="method#Store#5;class#Store#0" expanded="false" />
-            <element signature="method#setID#0;class#Store#0" expanded="false" />
-            <element signature="method#setStoreName#0;class#Store#0" expanded="false" />
-            <element signature="method#setServerID#0;class#Store#0" expanded="false" />
-            <element signature="method#setSyncStatus#0;class#Store#0" expanded="false" />
-            <element signature="method#setActiveStatus#0;class#Store#0" expanded="false" />
-            <element signature="method#getID#0;class#Store#0" expanded="false" />
-            <element signature="method#getStoreName#0;class#Store#0" expanded="false" />
-            <element signature="method#getServerID#0;class#Store#0" expanded="false" />
-            <element signature="method#getSyncStatus#0;class#Store#0" expanded="false" />
-            <element signature="method#getActiveStatus#0;class#Store#0" expanded="false" />
-            <element signature="method#toString#0;class#Store#0" expanded="false" />
+            <element signature="e#218#244#0" expanded="false" />
+            <element signature="e#279#307#0" expanded="false" />
+            <element signature="e#346#385#0" expanded="false" />
+            <element signature="e#424#471#0" expanded="false" />
+            <element signature="e#582#623#0" expanded="false" />
+            <element signature="e#668#711#0" expanded="false" />
+            <element signature="e#829#869#0" expanded="false" />
+            <element signature="e#914#956#0" expanded="false" />
+            <element signature="e#1077#1120#0" expanded="false" />
+            <element signature="e#1165#1210#0" expanded="false" />
+            <element signature="e#1328#1368#0" expanded="false" />
+            <element signature="e#1413#1455#0" expanded="false" />
+            <element signature="e#1500#1530#0" expanded="false" />
+            <element signature="e#1573#1613#0" expanded="false" />
+            <element signature="e#1842#1888#0" expanded="false" />
+            <element signature="e#1931#1956#0" expanded="false" />
+            <element signature="e#1999#2040#0" expanded="false" />
+            <element signature="e#2244#2250#0" expanded="false" />
+            <element signature="e#2293#2334#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/res/values/strings_activity_login.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="57" selection-start="219" selection-end="219" vertical-scroll-proportion="0.13915417" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/res/layout/main_activity.xml">
-      <provider editor-type-id="text-editor">
-        <state line="56" column="58" selection-start="2567" selection-end="2567" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding />
-        </state>
-      </provider>
-      <provider selected="true" editor-type-id="android-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Category.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="13" selection-start="124" selection-end="124" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0">
-          <folding>
-            <element signature="method#Category#0;class#Category#0" expanded="false" />
-            <element signature="method#Category#1;class#Category#0" expanded="false" />
-            <element signature="method#Category#2;class#Category#0" expanded="false" />
-            <element signature="method#Category#3;class#Category#0" expanded="false" />
-            <element signature="method#Category#4;class#Category#0" expanded="false" />
-            <element signature="method#Category#5;class#Category#0" expanded="false" />
-            <element signature="method#setID#0;class#Category#0" expanded="false" />
-            <element signature="method#setCategoryName#0;class#Category#0" expanded="false" />
-            <element signature="method#setServerID#0;class#Category#0" expanded="false" />
-            <element signature="method#setSyncStatus#0;class#Category#0" expanded="false" />
-            <element signature="method#setActiveStatus#0;class#Category#0" expanded="false" />
-            <element signature="method#getID#0;class#Category#0" expanded="false" />
-            <element signature="method#getCategoryName#0;class#Category#0" expanded="false" />
-            <element signature="method#getServerID#0;class#Category#0" expanded="false" />
-            <element signature="method#getSyncStatus#0;class#Category#0" expanded="false" />
-            <element signature="method#getActiveStatus#0;class#Category#0" expanded="false" />
-            <element signature="method#toString#0;class#Category#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/IBackgroundProcessor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="73" selection-start="447" selection-end="447" vertical-scroll-proportion="0.29791895" vertical-offset="0" max-vertical-offset="0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/DBHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="60" selection-start="777" selection-end="777" vertical-scroll-proportion="0.3588889" vertical-offset="0" max-vertical-offset="900">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="76" selection-start="939" selection-end="939" vertical-scroll-proportion="0.0" vertical-offset="357" max-vertical-offset="2754">
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/LoginActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="202" column="33" selection-start="7293" selection-end="7331" vertical-scroll-proportion="0.81380063" vertical-offset="2283" max-vertical-offset="3196">
+        <state line="190" column="46" selection-start="6957" selection-end="6957" vertical-scroll-proportion="1.789899" vertical-offset="1936" max-vertical-offset="3434">
+          <folding>
+            <element signature="e#5353#5393#0" expanded="false" />
+            <element signature="e#5566#5608#0" expanded="false" />
+            <element signature="e#5810#5850#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/res/layout/main_activity.xml">
+      <provider selected="true" editor-type-id="android-designer">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state line="50" column="55" selection-start="2257" selection-end="2257" vertical-scroll-proportion="0.0" vertical-offset="561" max-vertical-offset="2482">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/sdk/platforms/android-17/android.jar!/android/os/AsyncTask.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="952" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CreateCategory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="59" selection-start="862" selection-end="862" vertical-scroll-proportion="0.5102319" vertical-offset="0" max-vertical-offset="733">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/PostDebitClick.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="20" selection-start="1006" selection-end="1006" vertical-scroll-proportion="0.0" vertical-offset="593" max-vertical-offset="1360">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ValidateLogin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="164" column="56" selection-start="6600" selection-end="6697" vertical-scroll-proportion="0.0" vertical-offset="1479" max-vertical-offset="2873">
+        <state line="162" column="0" selection-start="6442" selection-end="6442" vertical-scroll-proportion="0.0" vertical-offset="2159" max-vertical-offset="3315">
           <folding>
-            <element signature="method#ValidateLogin#2;class#ValidateLogin#0" expanded="false" />
-            <element signature="method#ValidateLogin#3;class#ValidateLogin#0" expanded="false" />
-            <element signature="method#setBackgroundProcessor#0;class#ValidateLogin#0" expanded="false" />
-            <element signature="method#setContext#0;class#ValidateLogin#0" expanded="false" />
-            <element signature="method#setUserName#0;class#ValidateLogin#0" expanded="false" />
-            <element signature="method#setPassword#0;class#ValidateLogin#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/StoreDBInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="225" column="0" selection-start="9980" selection-end="10027" vertical-scroll-proportion="0.0" vertical-offset="3789" max-vertical-offset="4386">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#6418#6425#0" expanded="true" />
-            <element signature="e#7857#7864#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryDBInterface.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="216" column="27" selection-start="10444" selection-end="10444" vertical-scroll-proportion="0.0" vertical-offset="3604" max-vertical-offset="4335">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#6897#6907#0" expanded="true" />
-            <element signature="e#8415#8425#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ServerSynchroniser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="60" selection-start="3115" selection-end="3115" vertical-scroll-proportion="0.0" vertical-offset="1127" max-vertical-offset="3230">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2821#2830#0" expanded="true" />
+            <element signature="e#6574#6589#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="28" selection-start="69" selection-end="69" vertical-scroll-proportion="0.056951422" vertical-offset="0" max-vertical-offset="7123">
+        <state line="354" column="46" selection-start="15241" selection-end="15241" vertical-scroll-proportion="0.0" vertical-offset="5457" max-vertical-offset="7259">
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Common.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="36" selection-start="623" selection-end="623" vertical-scroll-proportion="0.0" vertical-offset="37" max-vertical-offset="2924">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/CategoryDBInterface.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="239" column="70" selection-start="11671" selection-end="11671" vertical-scroll-proportion="0.0" vertical-offset="3087" max-vertical-offset="4454">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/ServerSynchroniser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="149" column="31" selection-start="6023" selection-end="6023" vertical-scroll-proportion="0.0" vertical-offset="413" max-vertical-offset="5440">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3975#3984#0" expanded="true" />
+            <element signature="e#9036#9051#0" expanded="true" />
+            <element signature="e#10584#10594#0" expanded="true" />
+            <element signature="e#15238#15247#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MySimpleBudget/src/main/java/com/omalleyland/mysimplebudget/Category.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="120" column="0" selection-start="3694" selection-end="3694" vertical-scroll-proportion="2.07489" vertical-offset="1450" max-vertical-offset="2380">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Android</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.7</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>Android-Gradle|MySimpleBudgetProject</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>android-support-v4</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>
 

@@ -29,14 +29,13 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
 
     /* For Managing Preferences/Log Messages */
     private SharedPreferences prefs;
-    private ValidateLogin validateLogin;
+    private String serverAddress;
+    private String loginValidationPage;
     private String className;
 
     // UI references.
     private EditText mUserNameView;
     private EditText mPasswordView;
-
-    String validationServer = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +46,12 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
 
         //Get Validation Server to pass along to the ValidateLoginCall
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        validationServer = prefs.getString("preferenceValidationServer", "");
+        serverAddress       = prefs.getString(Common.SERVER_ADDRESS_PREFERENCE, "");
+        loginValidationPage = prefs.getString(Common.SERVER_LOGIN_ADDRESS_PREFERENCE, "");
+
+        if(!serverAddress.endsWith("/")) {
+            serverAddress += "/";
+        }
 
         // Set up the login form.
         mUserNameView = (EditText) findViewById(R.id.email);
@@ -127,6 +131,7 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
      * errors are presented and no actual mainmenu attempt is made.
      */
     public void attemptLogin() {
+        ValidateLogin validateLogin;
         String userName;
         String password;
 
@@ -167,9 +172,7 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
             String validationServer;
             //Write User Preferences to Save login information
             prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            prefs.edit().putString(Common.USER_NAME_PREFERENCE, userName).commit();
-            prefs.edit().putString(Common.PASSWORD_PREFERENCE, password).commit();
-            validateLogin = new ValidateLogin(this, this, this.validationServer, userName, password);
+            validateLogin = new ValidateLogin(this, this, serverAddress.concat(loginValidationPage), userName, password);
             validateLogin.executeValidation();
         }
     }
@@ -179,9 +182,18 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
      */
     //For handling Login Call Back
     public void processLoginResult(int resultCode, String passwordHash) {
+        String userName;
+        String password;
         if(resultCode == Common.LOGIN_SUCCESSFUL) {
+
+            //Store user/pass to preferences since login succeeded
+            userName = mUserNameView.getText().toString();
+            password = mPasswordView.getText().toString();
+            prefs.edit().putString(Common.USER_NAME_PREFERENCE, userName).commit();
+            prefs.edit().putString(Common.PASSWORD_PREFERENCE, password).commit();
+
             Intent i = new Intent();
-            i.putExtra(Common.LOGIN_RESULT_USER_EXTRA, mUserNameView.getText().toString());
+            i.putExtra(Common.LOGIN_RESULT_USER_EXTRA, userName);
             i.putExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA, passwordHash);
 
             //Pass result code, username and password hash back to calling activity
@@ -189,13 +201,15 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
             finish();
         }
         else if(resultCode == Common.LOGIN_FAILED) {
-
+            Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
         }
         else if(resultCode == Common.LOGIN_CANCELED) {
-
+            //Do Nothing, User can try again
         }
         else if(resultCode == Common.LOGIN_CONNECTION_ERROR) {
-
+            Toast.makeText(this, "Validation Server Connectoin Error", Toast.LENGTH_LONG).show();
+            setResult(Common.LOGIN_CONNECTION_ERROR, new Intent());
+            finish();
         }
     }
 

@@ -23,6 +23,8 @@ public class CreateCategory extends Activity {
         if(etCategoryName.getText().toString().length() > 0) {
             Category category = new Category(etCategoryName.getText().toString());
             CategoryDBInterface categoryDBIntfc = new CategoryDBInterface(getApplicationContext());
+            category.setSyncStatus(Common.SYNC_STATUS_NEW);
+            category.setActiveStatus(Common.ACTIVE_STATUS_ACTIVE);
             categoryDBIntfc.addCategory(category);
             setResult(RESULT_OK);
             finish();
