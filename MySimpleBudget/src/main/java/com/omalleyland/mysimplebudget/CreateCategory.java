@@ -25,7 +25,7 @@ public class CreateCategory extends Activity {
             CategoryDBInterface categoryDBIntfc = new CategoryDBInterface(getApplicationContext());
             category.setSyncStatus(Common.SYNC_STATUS_NEW);
             category.setActiveStatus(Common.ACTIVE_STATUS_ACTIVE);
-            categoryDBIntfc.addCategory(category);
+            categoryDBIntfc.addObject(category);
             setResult(RESULT_OK);
             finish();
         }

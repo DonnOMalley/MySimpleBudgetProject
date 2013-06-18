@@ -240,10 +240,10 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         else if(requestCode == Common.CREATE_CATEGORY_RESULT_CODE) {
             Log.v(className, "Category Activity Result :: " + Integer.toString(resultCode));
             if(resultCode == RESULT_OK) {
-                String selectedCategory = ((Category)spCategorySpinner.getSelectedItem()).getCategoryName();
+                String selectedCategory = ((Category)spCategorySpinner.getSelectedItem()).getName();
                 loadCategorySpinner();
                 for(int i=0; i<spCategorySpinner.getAdapter().getCount(); i++) {
-                    if(selectedCategory.equals(((Category)spCategorySpinner.getItemAtPosition(i)).getCategoryName())) {
+                    if(selectedCategory.equals(((Category)spCategorySpinner.getItemAtPosition(i)).getName())) {
                         spCategorySpinner.setSelection(i);
                         break;
                     }
@@ -269,12 +269,12 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
     private void loadCategorySpinner() {
         Log.d(className, "Loading Category Spinner");
         CategoryDBInterface categoryDBIntf = new CategoryDBInterface(this);
-        List<Category> categoryList;
-        ArrayAdapter<Category> categoryArrayAdapter;
+        List<SyncObject> categoryList;
+        ArrayAdapter<SyncObject> categoryArrayAdapter;
         Log.d(className, "Getting Category List");
-        categoryList = categoryDBIntf.getAllCategories();
+        categoryList = categoryDBIntf.getAllDatabaseObjects();
         categoryList.add(0, new Category("<SELECT CATEGORY>"));
-        categoryArrayAdapter = new ArrayAdapter<Category>(this,android.R.layout.simple_spinner_item, categoryList);
+        categoryArrayAdapter = new ArrayAdapter<SyncObject>(this,android.R.layout.simple_spinner_item, categoryList);
         categoryArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spCategorySpinner.setOnItemSelectedListener(new onCategorySelected());
@@ -401,7 +401,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             //Get Selected Category by Name
             Log.d(className, "Getting Selected Category");
             if(spCategorySpinner.getCount() > 0) {
-                selectedCategory = ((Category)spCategorySpinner.getSelectedItem()).getCategoryName();
+                selectedCategory = ((Category)spCategorySpinner.getSelectedItem()).getName();
             }
 
             Log.d(className, "Updating Category Spinner");
@@ -409,7 +409,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             loadCategorySpinner();
             if(selectedCategory.length() > 0) {
                 for(int i=0; i<spCategorySpinner.getAdapter().getCount(); i++) {
-                    if(selectedCategory.equals(((Category)spCategorySpinner.getItemAtPosition(i)).getCategoryName())) {
+                    if(selectedCategory.equals(((Category)spCategorySpinner.getItemAtPosition(i)).getName())) {
                         spCategorySpinner.setSelection(i);
                         break;
                     }

@@ -11,6 +11,7 @@ import java.security.PublicKey;
 public class Common {
     /* Application/Debug Constant */
     public static final String      APPLICATION_NAME                    = "MySimpleBudget";
+    public static final int         UNKNOWN                             = -1;
 
     /* SQLite DB Constants */
     public static final int         DATABASE_VERSION                    = 1;
@@ -166,4 +167,8 @@ public class Common {
     public static final String      HTTP_RESPONSE_RESULT                = "result";
     public static final String      HTTP_RESPONSE_RESULT_SUCCESS        = "success";
     public static final String      HTTP_RESPONSE_TIMESTAMP             = "timestamp";
+
+    public static final int         SYNC_OBJECT_TYPE_CATEGORY           = 0;
+    public static final int         SYNC_OBJECT_TYPE_STORE              = 1;
+
 }

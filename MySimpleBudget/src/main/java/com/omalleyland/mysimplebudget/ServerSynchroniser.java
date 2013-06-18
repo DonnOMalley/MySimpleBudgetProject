@@ -107,6 +107,9 @@ public class ServerSynchroniser {
             String httpResponse = "";
             JSONObject httpResponseJSON;
 
+            SyncObject syncObject;
+            Boolean continueProcessing = false;
+
             //Initialize Date Format to match MySQL
             //Set Timezone to ensure dates against the server only evaluate with GMT
             simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -136,99 +139,20 @@ public class ServerSynchroniser {
 
                     //Get Category Sync Page
                     syncPage = prefs.getString(Common.SERVER_CATEGORY_ADDRESS_PREFERENCE, "");
-                    publishProgress("Processing Categories...");
-                    if(syncPage.length() > 0) {
-                        syncPage = serverAddress.concat(syncPage);
+                    syncPage = serverAddress.concat(syncPage);
 
-                        //Initialize HTTP Objects
-                        httpClient = new DefaultHttpClient();
+                    //Synchronise Categories
+                    continueProcessing = synchroniseCategories(dateString, userName, password, syncPage);
+                    updateUIList.set(Common.CATEGORY_UI_CONTROL_INDEX, continueProcessing);
 
-                        httpParams = new BasicHttpParams();
-                        HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-                        HttpConnectionParams.setSoTimeout(httpParams, 5000);
-
-                        CategoryDBInterface categoryDBInterface = new CategoryDBInterface(context);
-                        categoryList = categoryDBInterface.getCategoryUpdates();
-                        if(categoryList.size() > 0) {
-                            JSONObject jsonObject = new JSONObject();
-                            JSONArray jsonArray = new JSONArray();
-                            jsonObject.put("type", "post");
-                            jsonObject.put("user", userName);
-                            for(int i = 0; i < categoryList.size(); i++) {
-                                Category category = categoryList.get(i);
-                                JSONObject categoryJSON = new JSONObject(category.getMap());
-                                jsonArray.put(categoryJSON);
-                            }
-                            jsonObject.put("categoryArray", jsonArray);
-                            Log.d(className, jsonObject.toString());
-
-                            httpPost = new HttpPost(syncPage);
-                            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-                            nameValuePairs.add(new BasicNameValuePair("username", userName));
-                            nameValuePairs.add(new BasicNameValuePair("password", password));
-                            nameValuePairs.add(new BasicNameValuePair("json", jsonObject.toString()));
-                            Log.d(className, "Name Value Pairs built : ".concat(Integer.toString(nameValuePairs.size())));
-                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                            Log.d(className, "Executing HTTP Request To :: ".concat(syncPage));
-                            HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
-                            httpResponse = EntityUtils.toString(httpEntity);
-                            Log.d(className, "http Post Response = ".concat(httpResponse.toString()));
-                        }
-
-                        /*
-                            Build HTTP Get Request to get list of updated Categories since last sync
-                        */
-
-                        //Build json based on last sync date time (or beginning of time if never sync'd)
-                        JSONObject categoryRequestJSON = new JSONObject();
-                        categoryRequestJSON.put("type", "get");
-                        categoryRequestJSON.put("lastUpdated", dateString);
-                        Log.d(className, "categoryRequestJSON = ".concat(categoryRequestJSON.toString()));
-                        httpPost = new HttpPost(syncPage);
-                        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-                        nameValuePairs.add(new BasicNameValuePair("username", userName));
-                        nameValuePairs.add(new BasicNameValuePair("password", password));
-                        nameValuePairs.add(new BasicNameValuePair("json", categoryRequestJSON.toString()));
-                        Log.d(className, "Name Value Pairs built : ".concat(Integer.toString(nameValuePairs.size())));
-                        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                        Log.d(className, "Executing HTTP Request To :: ".concat(syncPage));
-                        HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
-                        httpResponse = EntityUtils.toString(httpEntity);
-                        if(httpResponse.length() > 0) {
-                            Log.d(className, "HTTP Response Received :: ".concat(httpResponse.toString()));
-
-                            //Parse JSON at this point.
-                            JSONObject jsonResponse = new JSONObject(httpResponse.toString());
-                            Log.d(className, "JSON Response = ".concat(jsonResponse.toString()));
-                            String resultString = jsonResponse.getString("result");
-                            Log.d(className, "Process Categories Get Result = ".concat(resultString));
-                            JSONArray jsonArrayResponse = jsonResponse.getJSONArray("categoryArray");
-                            List<Category> categoriesToUpdate = new ArrayList<Category>();
-                            for(int i=0; i< jsonArrayResponse.length(); i++) {
-                                Category jsonCategory = new Category();
-                                jsonCategory.JSONToObject(jsonArrayResponse.getJSONObject(i));
-                                Log.d(className, "Category From JSON = ".concat(jsonCategory.toString()));
-                                //Insert category into database (or list in preparation for database
-                                categoriesToUpdate.add(jsonCategory);
-                            }
-                            categoryDBInterface.updateCategoryRecords(categoriesToUpdate, Common.SYNC_STATUS_SYNCHRONIZED);
-                            updateUIList.set(Common.CATEGORY_UI_CONTROL_INDEX, true);
-                            Log.d(className, "Category Spinner Update List Set to True");
-                        }
-                        else {
-                            Log.d(className, "Empty Response");
-                        }
-                        syncResult = "Done";
-                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-                        String updatedTimestamp = simpleDateFormat.format(new Date());
-                        Log.d(className, "Updating Sync Timestamp :: ".concat(updatedTimestamp));
-                        prefs.edit().putString(Common.LAST_CATEGORY_SYNC_PREFERENCE, updatedTimestamp).commit();
-                    }
-                    else {
-                        syncResult = "ERROR";
+                    if(continueProcessing) {
+                        //Process stores
+                        //Get store's last sync timestamp and sync page
+                        continueProcessing = true; //synchroniseStores(dateString, userName, password, syncPage)
                     }
 
-                    publishProgress(syncResult + '\n' + "Processing Stores...");
+                    //Synchronise Stores
+                    publishProgress("Processing Stores...");
 
                     //Get date of last sync
                     dateString = prefs.getString(Common.LAST_STORE_SYNC_PREFERENCE, "-1");
@@ -237,10 +161,7 @@ public class ServerSynchroniser {
                         dateString = simpleDateFormat.format(new Date(0));
                     }
 
-                    ///////////////////////////////
-
-
-                    //Get Category Sync Page
+                    //Get Store Sync Page
                     syncPage = prefs.getString(Common.SERVER_STORE_ADDRESS_PREFERENCE, "");
                     if(syncPage.length() > 0) {
                         syncPage = serverAddress.concat(syncPage);
@@ -382,6 +303,134 @@ public class ServerSynchroniser {
             updateUIList.add(false); //Update Categories
             updateUIList.add(false); //Update Stores
             bgProcessor.updateUIControls(updateUIList);
+        }
+
+        private Boolean synchroniseCategories(String lastSync, String userName, String password, String syncPage){
+            //Return value, Progress Update Text and update sync timestamp
+            Boolean             result              = false;
+            String              syncResult          = "ERROR";
+            SimpleDateFormat    simpleDateFormat    = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SharedPreferences   prefs               = PreferenceManager.getDefaultSharedPreferences(context);
+
+            //Objects for sending/receiving Http Request/Response
+            DefaultHttpClient   httpClient;
+            BasicHttpParams     httpParams;
+            HttpPost            httpPost;
+            HttpEntity          httpEntity;
+            String              httpResponse;
+            List<NameValuePair> nameValuePairs;
+
+            //Http Request/Response Data Objects
+            JSONArray           jsonArray;
+            JSONObject          jsonPostObject;
+            JSONObject          jsonResponse;
+
+            publishProgress("Processing Categories...");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+            if(syncPage.length() > 0) {
+                try {
+                    //Initialize HTTP Objects
+                    httpClient = new DefaultHttpClient();
+
+                    httpParams = new BasicHttpParams();
+                    HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
+                    HttpConnectionParams.setSoTimeout(httpParams, 5000);
+
+                    CategoryDBInterface categoryDBInterface = new CategoryDBInterface(context);
+                    List<SyncObject> syncObjects;
+                    syncObjects = categoryDBInterface.getUpdatedDatabaseObjects();
+                    //categoryList = categoryDBInterface.getCategoryUpdates();
+                    if(syncObjects.size() > 0) {
+                        jsonPostObject = new JSONObject();
+                        jsonArray = new JSONArray();
+
+                        try {
+                            jsonPostObject.put("type", "post");
+                            jsonPostObject.put("user", userName);
+                            for(int i = 0; i < syncObjects.size(); i++) {
+                                Category category = (Category)syncObjects.get(i);
+                                JSONObject categoryJSON = new JSONObject(category.getMap());
+                                jsonArray.put(categoryJSON);
+                            }
+                            jsonPostObject.put("categoryArray", jsonArray);
+                            Log.d(className, jsonPostObject.toString());
+
+                            httpPost = new HttpPost(syncPage);
+                            nameValuePairs = new ArrayList<NameValuePair>(3);
+                            nameValuePairs.add(new BasicNameValuePair("username", userName));
+                            nameValuePairs.add(new BasicNameValuePair("password", password));
+                            nameValuePairs.add(new BasicNameValuePair("json", jsonPostObject.toString()));
+                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                            Log.d(className, "Executing HTTP Request To :: ".concat(syncPage));
+                            httpEntity = httpClient.execute(httpPost).getEntity();
+                            httpResponse = EntityUtils.toString(httpEntity);
+                            Log.d(className, "HTTP Post Response = ".concat(httpResponse.toString()));
+                        }
+                        catch (Exception e) {
+                            throw new Exception(className + "Exception Posting Category Updates :: " + e.getMessage());
+                        }
+                    }
+
+                    /*
+                        Build HTTP Get Request to get list of updated Categories since last sync
+                    */
+                    //Build json based on last sync date time (or beginning of time if never sync'd)
+                    jsonPostObject = new JSONObject();
+                    try {
+                        jsonPostObject.put("type", "get");
+                        jsonPostObject.put("lastUpdated", lastSync);
+                        Log.d(className, "categoryRequestJSON = ".concat(jsonPostObject.toString()));
+
+                        httpPost = new HttpPost(syncPage);
+                        nameValuePairs = new ArrayList<NameValuePair>(3);
+                        nameValuePairs.add(new BasicNameValuePair("username", userName));
+                        nameValuePairs.add(new BasicNameValuePair("password", password));
+                        nameValuePairs.add(new BasicNameValuePair("json", jsonPostObject.toString()));
+                        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                        Log.d(className, "Executing HTTP GET Request To :: ".concat(syncPage));
+                        httpResponse = EntityUtils.toString(httpClient.execute(httpPost).getEntity());
+                        Log.d(className, "HTTP Response Received :: ".concat(httpResponse.toString()));
+
+                        if(httpResponse.length() > 0) {
+                            //Parse JSON at this point.
+                            jsonResponse = new JSONObject(httpResponse.toString());
+                            Log.d(className, "HTTP JSON String = ".concat(jsonResponse.toString()));
+
+                            httpResponse = jsonResponse.getString("result");
+                            Log.d(className, "HTTP GET Result = ".concat(httpResponse));
+
+                            jsonArray = jsonResponse.getJSONArray("categoryArray");
+                            List<SyncObject> syncObjectsToUpdate = new ArrayList<SyncObject>();
+                            for(int i=0; i< jsonArray.length(); i++) {
+                                Category jsonCategory = new Category();
+                                jsonCategory.JSONToObject(jsonArray.getJSONObject(i));
+                                Log.d(className, "Category From JSON = ".concat(jsonCategory.toString()));
+                                syncObjectsToUpdate.add(jsonCategory);
+                            }
+                            categoryDBInterface.updateDatabaseObjectsSyncStatus(syncObjectsToUpdate, Common.SYNC_STATUS_SYNCHRONIZED);
+                        }
+                        else {
+                            Log.d(className, "Empty Response");
+                        }
+                        String updatedTimestamp = simpleDateFormat.format(new Date());
+                        Log.d(className, "Updating Sync Timestamp :: ".concat(updatedTimestamp));
+                        prefs.edit().putString(Common.LAST_CATEGORY_SYNC_PREFERENCE, updatedTimestamp).commit();
+                        syncResult = "Done";
+                    }
+                    catch (Exception e) {
+                        throw new Exception(className + "Exception Reading Categories from Server :: " + e.getMessage());
+                    }
+                }
+                catch (Exception e) {
+                    syncResult = "ERROR";
+                    Log.e(className, "Exception Processing Category Sync :: ".concat(e.getMessage()));
+                }
+            }
+            publishProgress(syncResult + '\n'); //Post result to dialog and append a new line character
+            return result;
         }
     }
 }
