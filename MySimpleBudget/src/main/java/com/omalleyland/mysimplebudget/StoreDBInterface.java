@@ -225,19 +225,28 @@ public class StoreDBInterface {
             db = dbHelper.getWritableDatabase();
 
             for(Store store : updatedStores) {
-                values.clear();
-                values.put(Common.colSTORE_ID, store.getID());
-                values.put(Common.colSTORE_NAME, store.getStoreName());
-                values.put(Common.colSTORE_SERVER_ID, store.getServerID());
-                values.put(Common.colSTORE_SYNC_STATUS, syncStatus);
-                values.put(Common.colSTORE_ACTIVE_STATUS, store.getActiveStatus());
-                whereArgs = new String[]{store.getStoreName()};
-                Log.d(className, "Updating Store Record :: id = " + Integer.toString(store.getID()) +
-                        ", name = " + store.getStoreName() +
-                        ", serverID = " + Integer.toString(store.getServerID()) +
-                        ", syncStatus = " + Integer.toString(store.getSyncStatus()) +
-                        ", activeStatus = " + Integer.toString(store.getActiveStatus()));
-                updatedRecords = updatedRecords + db.update(Common.tblSTORES, values, whereClause, whereArgs);
+                Store existingStore = getStore(store.getStoreName());
+                if(existingStore != null) {
+
+                    values.clear();
+                    values.put(Common.colSTORE_ID, store.getID());
+                    values.put(Common.colSTORE_NAME, store.getStoreName());
+                    values.put(Common.colSTORE_SERVER_ID, store.getServerID());
+                    values.put(Common.colSTORE_SYNC_STATUS, syncStatus);
+                    values.put(Common.colSTORE_ACTIVE_STATUS, store.getActiveStatus());
+                    whereArgs = new String[]{store.getStoreName()};
+                    Log.d(className, "Updating Store Record :: id = " + Integer.toString(store.getID()) +
+                            ", name = " + store.getStoreName() +
+                            ", serverID = " + Integer.toString(store.getServerID()) +
+                            ", syncStatus = " + Integer.toString(store.getSyncStatus()) +
+                            ", activeStatus = " + Integer.toString(store.getActiveStatus()));
+                    updatedRecords = updatedRecords + db.update(Common.tblSTORES, values, whereClause, whereArgs);
+                }
+                else {
+                    if(addStore(store) > -1) {
+                        updatedRecords += 1;
+                    }
+                }
             }
             Log.d(className, "Number of Store Records = " + Integer.toString(updatedRecords));
             result = true;

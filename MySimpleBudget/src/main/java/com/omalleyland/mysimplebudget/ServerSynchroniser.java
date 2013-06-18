@@ -108,7 +108,9 @@ public class ServerSynchroniser {
             JSONObject httpResponseJSON;
 
             //Initialize Date Format to match MySQL
+            //Set Timezone to ensure dates against the server only evaluate with GMT
             simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
             ArrayList<Boolean> updateUIList = new ArrayList<Boolean>();
             updateUIList.add(Common.CATEGORY_UI_CONTROL_INDEX, false);  //initialize Category failure
@@ -124,6 +126,13 @@ public class ServerSynchroniser {
             if((serverAddress.length() > 0) && (userName.length() > 0) && (password.length() > 0)) {
 
                 try {
+
+                    //Get date of last sync
+                    dateString = prefs.getString(Common.LAST_CATEGORY_SYNC_PREFERENCE, "-1");
+                    Log.d(className, "Last Category Sync Timestamp :: ".concat(dateString));
+                    if(dateString.equals("-1")) {
+                        dateString = simpleDateFormat.format(new Date(0));
+                    }
 
                     //Get Category Sync Page
                     syncPage = prefs.getString(Common.SERVER_CATEGORY_ADDRESS_PREFERENCE, "");
@@ -163,37 +172,12 @@ public class ServerSynchroniser {
                             Log.d(className, "Executing HTTP Request To :: ".concat(syncPage));
                             HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
                             httpResponse = EntityUtils.toString(httpEntity);
-                        }
-
-                        if(httpResponse.length() > 0) {
                             Log.d(className, "http Post Response = ".concat(httpResponse.toString()));
-//                            httpResponseJSON = new JSONObject(httpResponse);
-//
-//                            //If http response = 'success'
-//                            if(httpResponseJSON.getString(Common.HTTP_RESPONSE_RESULT).equals(Common.HTTP_RESPONSE_RESULT_SUCCESS)) {
-//
-//                                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-//                                Date syncedDate = simpleDateFormat.parse(httpResponseJSON.getString(Common.HTTP_RESPONSE_TIMESTAMP));
-//                                //For each category, update category in local SQLite DB
-//                                categoryDBInterface.updateCategoryRecords(categoryList, Common.SYNC_STATUS_PENDING_VERIFY);
-//                            }
-                        }
-                        else {
-                            Log.d(className, "Http Post Empty Response");
                         }
 
                         /*
-                            If Http Post was sent and a result was returned, get data from server
+                            Build HTTP Get Request to get list of updated Categories since last sync
                         */
-                        //Set Timezone to ensure dates against the server only evaluate with GMT
-                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-                        //Get date of last sync
-                        dateString = prefs.getString(Common.LAST_CATEGORY_SYNC_PREFERENCE, "-1");
-                        Log.d(className, "Last Category Sync Timestamp :: ".concat(dateString));
-                        if(dateString.equals("-1")) {
-                            dateString = simpleDateFormat.format(new Date(0));
-                        }
 
                         //Build json based on last sync date time (or beginning of time if never sync'd)
                         JSONObject categoryRequestJSON = new JSONObject();
@@ -241,39 +225,118 @@ public class ServerSynchroniser {
                         prefs.edit().putString(Common.LAST_CATEGORY_SYNC_PREFERENCE, updatedTimestamp).commit();
                     }
                     else {
-                        Thread.sleep(2000);
                         syncResult = "ERROR";
                     }
 
-                    Thread.sleep(2000);
                     publishProgress(syncResult + '\n' + "Processing Stores...");
-                    syncResult = "";
 
-                    StoreDBInterface storeDBInterface = new StoreDBInterface(context);
+                    //Get date of last sync
+                    dateString = prefs.getString(Common.LAST_STORE_SYNC_PREFERENCE, "-1");
+                    Log.d(className, "Last Store Sync Timestamp :: ".concat(dateString));
+                    if(dateString.equals("-1")) {
+                        dateString = simpleDateFormat.format(new Date(0));
+                    }
+
+                    ///////////////////////////////
+
+
+                    //Get Category Sync Page
+                    syncPage = prefs.getString(Common.SERVER_STORE_ADDRESS_PREFERENCE, "");
+                    if(syncPage.length() > 0) {
+                        syncPage = serverAddress.concat(syncPage);
+
+                        //Initialize HTTP Objects
+                        httpClient = new DefaultHttpClient();
+
+                        httpParams = new BasicHttpParams();
+                        HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
+                        HttpConnectionParams.setSoTimeout(httpParams, 5000);
+
+                        StoreDBInterface storeDBInterface = new StoreDBInterface(context);
+                        storeList = storeDBInterface.getStoreUpdates();
+                        if(storeList.size() > 0) {
+                            JSONObject jsonObject = new JSONObject();
+                            JSONArray jsonArray = new JSONArray();
+                            jsonObject.put("type", "post");
+                            jsonObject.put("user", userName);
+                            for(int i = 0; i < storeList.size(); i++) {
+                                Store store = storeList.get(i);
+                                JSONObject storeJSON = new JSONObject(store.getMap());
+                                jsonArray.put(storeJSON);
+                            }
+                            jsonObject.put("storeArray", jsonArray);
+                            Log.d(className, jsonObject.toString());
+
+                            httpPost = new HttpPost(syncPage);
+                            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+                            nameValuePairs.add(new BasicNameValuePair("username", userName));
+                            nameValuePairs.add(new BasicNameValuePair("password", password));
+                            nameValuePairs.add(new BasicNameValuePair("json", jsonObject.toString()));
+                            Log.d(className, "Name Value Pairs built : ".concat(Integer.toString(nameValuePairs.size())));
+                            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                            Log.d(className, "Executing HTTP Request To :: ".concat(syncPage));
+                            HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
+                            httpResponse = EntityUtils.toString(httpEntity);
+                            Log.d(className, "http Post Response = ".concat(httpResponse.toString()));
+                        }
+
+                        /*
+                            Build HTTP Get Request to get list of updated Categories since last sync
+                        */
+
+                        //Build json based on last sync date time (or beginning of time if never sync'd)
+                        JSONObject storeRequestJSON = new JSONObject();
+                        storeRequestJSON.put("type", "get");
+                        storeRequestJSON.put("lastUpdated", dateString);
+                        Log.d(className, "storeRequestJSON = ".concat(storeRequestJSON.toString()));
+                        httpPost = new HttpPost(syncPage);
+                        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+                        nameValuePairs.add(new BasicNameValuePair("username", userName));
+                        nameValuePairs.add(new BasicNameValuePair("password", password));
+                        nameValuePairs.add(new BasicNameValuePair("json", storeRequestJSON.toString()));
+                        Log.d(className, "Name Value Pairs built : ".concat(Integer.toString(nameValuePairs.size())));
+                        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                        Log.d(className, "Executing HTTP Request To :: ".concat(syncPage));
+                        HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
+                        httpResponse = EntityUtils.toString(httpEntity);
+                        if(httpResponse.length() > 0) {
+                            Log.d(className, "HTTP Response Received :: ".concat(httpResponse.toString()));
+
+                            //Parse JSON at this point.
+                            JSONObject jsonResponse = new JSONObject(httpResponse.toString());
+                            Log.d(className, "JSON Response = ".concat(jsonResponse.toString()));
+                            String resultString = jsonResponse.getString("result");
+                            Log.d(className, "Process Stores Get Result = ".concat(resultString));
+                            JSONArray jsonArrayResponse = jsonResponse.getJSONArray("storeArray");
+                            List<Store> storesToUpdate = new ArrayList<Store>();
+                            for(int i=0; i< jsonArrayResponse.length(); i++) {
+                                Store jsonStore = new Store();
+                                jsonStore.JSONToObject(jsonArrayResponse.getJSONObject(i));
+                                Log.d(className, "Store From JSON = ".concat(jsonStore.toString()));
+                                //Insert category into database (or list in preparation for database
+                                storesToUpdate.add(jsonStore);
+                            }
+                            storeDBInterface.updateStoreRecords(storesToUpdate, Common.SYNC_STATUS_SYNCHRONIZED);
+                            updateUIList.set(Common.STORE_UI_CONTROL_INDEX, true);
+                            Log.d(className, "Store Spinner Update List Set to True");
+                        }
+                        else {
+                            Log.d(className, "Empty Response");
+                        }
+                        syncResult = "Done";
+                        String updatedTimestamp = simpleDateFormat.format(new Date());
+                        Log.d(className, "Updating Sync Timestamp :: ".concat(updatedTimestamp));
+                        prefs.edit().putString(Common.LAST_STORE_SYNC_PREFERENCE, updatedTimestamp).commit();
+                    }
+                    else {
+                        syncResult = "ERROR";
+                    }
+
+                    /////////////////////////////////
+
+                    publishProgress(syncResult + '\n' + "Processing Debits...");
                     Thread.sleep(2000);
-                    storeList = storeDBInterface.getStoreUpdates();
 
-
-                    //Create JSON To bulk insert any 'new' stores - Build 'Values' into json so PHP doesn't have to do any heavy lifting.
-                    //Create JSON To send all 'Updates' to the server -- Can't bulk update but build good data structure for php to process.
-
-                    //Query server for all changes since last store sync (store date/time in preferences)
-                    //  -Post Changes to local SQLite Database ('pending verify' => synchronized / <Not existing> => synchronized
-
-                    //Set Store sync preference date time
-
-                    updateUIList.set(Common.STORE_UI_CONTROL_INDEX, true);
-                    publishProgress("Done" + '\n' + "Processing Debits...");
-
-                    Thread.sleep(2000);
-
-                    //Create JSON To bulk insert any 'new' debits - Build 'Values' into json so PHP doesn't have to do any heavy lifting.
-
-                    //Query? server to confirm debits occurred? by user where entry_on > last debit sych time
-
-                    // Update local SQLite Database ('new' => synchronized);
-
-                    //set debit sync preference data time.
                     publishProgress("Done");
                 }
                 catch(Exception e) {
