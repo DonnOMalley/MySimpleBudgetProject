@@ -1,6 +1,9 @@
 package com.omalleyland.mysimplebudget;
 
 import android.database.Cursor;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 /**
@@ -23,8 +26,16 @@ public interface IObjectDBInterface {
 
     public abstract List<SyncObject> getUpdatedDatabaseObjects();
 
+    public abstract List<SyncObject> getUpdatedDatabaseObjects(boolean includePendingVerify);
+
     public abstract int updateDatabaseObjectsSyncStatus(List<SyncObject> syncObjects);
 
     public abstract int updateDatabaseObjectsSyncStatus(List<SyncObject> syncObjects, int syncStatus);
+
+    public abstract JSONObject buildJSON(int httpType, String userName, String password);
+
+    public abstract JSONObject buildJSON(int httpType, boolean includePendingVerify, String userName, String password);
+
+    public abstract List<SyncObject> parseJSONList(JSONObject jsonObject);
 
 }

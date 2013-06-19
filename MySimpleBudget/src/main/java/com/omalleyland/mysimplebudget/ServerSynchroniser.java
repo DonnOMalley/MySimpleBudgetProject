@@ -83,9 +83,11 @@ public class ServerSynchroniser {
 
         String dialogMessageText = "";
         Context context;
+        String className;
 
         SynchroniseProcess(Context context) {
             this.context = context;
+            this.className = getClass().toString();
         }
 
         @Override
@@ -170,8 +172,8 @@ public class ServerSynchroniser {
                         httpClient = new DefaultHttpClient();
 
                         httpParams = new BasicHttpParams();
-                        HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-                        HttpConnectionParams.setSoTimeout(httpParams, 5000);
+                        HttpConnectionParams.setConnectionTimeout(httpParams, Common.HTTP_TIMEOUT);
+                        HttpConnectionParams.setSoTimeout(httpParams, Common.HTTP_TIMEOUT);
 
                         StoreDBInterface storeDBInterface = new StoreDBInterface(context);
                         storeList = storeDBInterface.getStoreUpdates();
@@ -303,6 +305,60 @@ public class ServerSynchroniser {
             updateUIList.add(false); //Update Categories
             updateUIList.add(false); //Update Stores
             bgProcessor.updateUIControls(updateUIList);
+        }
+
+        private boolean synchronizeDataset(IHttpObject httpObject, IObjectDBInterface objectDBInterface, String userName, String password) {
+            JSONObject  jsonObject;
+            JSONObject  httpResponseJSON;
+            String      jsonHTTPResponse    = "";
+            boolean     result              = false;
+
+            //Execute Posting of new data
+            jsonObject = objectDBInterface.buildJSON(Common.HTTP_TYPE_POST, userName, password);
+            jsonHTTPResponse = httpObject.getHTTP(jsonObject.toString());
+            if(jsonHTTPResponse.length() > 0) {
+                try {
+                    httpResponseJSON = new JSONObject(jsonHTTPResponse);
+                    result = httpResponseJSON.get(Common.HTTP_RESPONSE_RESULT).equals(Common.HTTP_RESPONSE_RESULT_SUCCESS);
+                }
+                catch (Exception e) {
+                    Log.e(this.className, "Exception parsing JSON response :: ".concat(e.getMessage()));
+                }
+            }
+            if(result) {
+                //Execute Verify (Local Data)
+            }
+
+            if(result) {
+                //Execute Get (New from Server)
+                jsonObject = objectDBInterface.buildJSON(Common.HTTP_TYPE_GET, userName, password);
+                jsonHTTPResponse = httpObject.getHTTP(jsonObject.toString());
+                if(jsonHTTPResponse.length() > 0) {
+                    try {
+                        httpResponseJSON = new JSONObject(jsonHTTPResponse);
+                        if(httpResponseJSON.get(Common.HTTP_RESPONSE_RESULT).equals(Common.HTTP_RESPONSE_RESULT_SUCCESS)) {
+
+                        }
+                        else {
+                            result = false;
+                        }
+                    }
+                    catch (Exception e) {
+                        Log.e(this.className, "Exception parsing JSON response :: ".concat(e.getMessage()));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private boolean synchroniseObjects(IObjectDBInterface objectDBInterface, String userName, String password) {
+            //Return value, Progress Update Text and update sync timestamp
+            Boolean             result              = false;
+            String              syncResult          = "ERROR";
+            SimpleDateFormat    simpleDateFormat    = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            return true;
         }
 
         private Boolean synchroniseCategories(String lastSync, String userName, String password, String syncPage){

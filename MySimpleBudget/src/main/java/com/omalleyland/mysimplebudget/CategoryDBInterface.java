@@ -5,6 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -198,7 +207,12 @@ public class CategoryDBInterface implements IObjectDBInterface {
     }
 
     @Override
-    public List<SyncObject> getUpdatedDatabaseObjects() {
+    public List<SyncObject> getUpdatedDatabaseObjects(boolean includePendingVerify) {
+        return getUpdatedDatabaseObjects();
+    }
+
+        @Override
+        public List<SyncObject> getUpdatedDatabaseObjects() {
         SQLiteDatabase db;
         List<SyncObject> categoryList = new ArrayList<SyncObject>();
         String whereClause = Common.colCATEGORY_SYNC_STATUS + " IN (?,?)";
@@ -230,6 +244,8 @@ public class CategoryDBInterface implements IObjectDBInterface {
         dbHelper.close();
         return categoryList;
     }
+
+
 
     @Override
     public int updateDatabaseObjectsSyncStatus(List<SyncObject> syncObjects) {
@@ -329,6 +345,71 @@ public class CategoryDBInterface implements IObjectDBInterface {
         }
         dbHelper.close();
         return updatedRecords;
+    }
+
+    @Override
+    public JSONObject buildJSON(int httpType, String userName, String password) {
+        return buildJSON(httpType, false, userName, password);
+    }
+
+    @Override
+    public JSONObject buildJSON(int httpType, boolean includePendingVerify, String userName, String password) {
+        List<SyncObject> syncObjects = new ArrayList<SyncObject>();
+        Category category;
+        JSONObject jsonObjectResult = null;
+        JSONObject categoryJSON;
+        JSONArray jsonCategoryArray;
+
+        if(httpType == Common.HTTP_TYPE_POST) {
+            syncObjects = getUpdatedDatabaseObjects(includePendingVerify);
+            if(syncObjects.size() > 0) {
+                jsonObjectResult = new JSONObject();
+                jsonCategoryArray = new JSONArray();
+
+                try {
+                    jsonObjectResult.put("type", Common.HTTP_POST_JSON_TEXT);
+                    jsonObjectResult.put("user", userName);
+                    for(int i = 0; i < syncObjects.size(); i++) {
+                        category = (Category)syncObjects.get(i);
+                        categoryJSON = new JSONObject(category.getMap());
+                        jsonCategoryArray.put(categoryJSON);
+                    }
+                    jsonObjectResult.put("categoryArray", jsonCategoryArray);
+                    Log.d(this.className, jsonObjectResult.toString());
+                }
+                catch (Exception e) {
+                    Log.e(this.className, "Exception Building Category JSON :: " + e.getMessage());
+                }
+            }
+        }
+        else if(httpType == Common.HTTP_TYPE_GET) {
+
+        }
+
+        return jsonObjectResult;
+    }
+
+    public List<SyncObject> parseJSONList(JSONObject jsonObject) {
+        List<SyncObject>    syncObjects = new ArrayList<SyncObject>();
+        JSONArray           jsonArray;
+        JSONObject          categoryJSONObject;
+        Category            category;
+
+        try {
+            jsonArray = jsonObject.getJSONArray(Common.CATEGORY_JSON_ARRAY);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                categoryJSONObject = jsonArray.getJSONObject(i);
+                category = new Category();
+                category.JSONToObject(categoryJSONObject);
+                syncObjects.add(category);
+            }
+        }
+        catch (Exception e) {
+            syncObjects.clear(); //Wipe out anything that may have been put in.
+            Log.e(this.className, "Exception parsing JSON To Category List :: ".concat(e.getMessage()));
+        }
+
+        return syncObjects;
     }
 }
 

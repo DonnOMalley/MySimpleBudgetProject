@@ -170,5 +170,13 @@ public class Common {
 
     public static final int         SYNC_OBJECT_TYPE_CATEGORY           = 0;
     public static final int         SYNC_OBJECT_TYPE_STORE              = 1;
+    public static final int         HTTP_TYPE_POST                      = 0;
+    public static final String      HTTP_POST_JSON_TEXT                 = "post";
+    public static final int         HTTP_TYPE_GET                       = 1;
+    public static final String      HTTP_GET_JSON_TEXT                  = "get";
+    public static final String      DATE_FORMAT_STRING                  = "yyyy-MM-dd HH:mm:ss";
+    public static final int         HTTP_TIMEOUT                        = 5000;
+
+    public static final String      CATEGORY_JSON_ARRAY                 = "categoryArray";
 
 }

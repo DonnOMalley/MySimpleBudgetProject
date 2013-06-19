@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -256,6 +258,10 @@ public class StoreDBInterface {
         }
         dbHelper.close();
         return result;
+    }
+
+    public JSONArray buildJSON(int httpType) {
+        return null;
     }
 }
 
