@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by omal310371 on 6/19/13.
@@ -52,6 +53,7 @@ public class CategoryHTTPObject implements IHttpObject {
 
         //initialize date format for strings to match MySQL
         simpleDateFormat = new SimpleDateFormat(Common.DATE_FORMAT_STRING);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         syncPage = prefs.getString(Common.SERVER_CATEGORY_ADDRESS_PREFERENCE, "");
         syncPage = serverAddress.concat(syncPage);
@@ -77,7 +79,7 @@ public class CategoryHTTPObject implements IHttpObject {
         Log.d(this.className, "Name Value Pairs built : ".concat(Integer.toString(nameValuePairs.size())));
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            Log.d(this.className, "Executing HTTP Request To :: ".concat(this.syncPage));
+            Log.d(this.className, "Executing Post HTTP Request To :: ".concat(this.syncPage));
             httpClient = new DefaultHttpClient();
             HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
             httpResponse = EntityUtils.toString(httpEntity);
@@ -104,7 +106,7 @@ public class CategoryHTTPObject implements IHttpObject {
         Log.d(this.className, "Name Value Pairs built : ".concat(Integer.toString(nameValuePairs.size())));
         try {
             httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-            Log.d(this.className, "Executing HTTP Request To :: ".concat(this.syncPage));
+            Log.d(this.className, "Executing Get HTTP Request To :: ".concat(this.syncPage));
             httpClient = new DefaultHttpClient();
             HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
             httpResponse = EntityUtils.toString(httpEntity);
@@ -112,8 +114,15 @@ public class CategoryHTTPObject implements IHttpObject {
         catch (Exception e) {
             Log.e(this.className, "Exception building/executing HTTP Post :: ".concat(e.getMessage()));
         }
-        Log.d(this.className, "http Post Response = ".concat(httpResponse.toString()));
+        Log.d(this.className, "http Get Response = ".concat(httpResponse.toString()));
 
         return httpResponse;
+    }
+
+    @Override
+    public void setSyncTimestamp() {
+        dateString = simpleDateFormat.format(new Date());
+        Log.d(this.className, "Writing Category Sync Timestamp :: ".concat(dateString));
+        prefs.edit().putString(Common.LAST_CATEGORY_SYNC_PREFERENCE, dateString).commit();
     }
 }

@@ -249,7 +249,45 @@ public class ServerSynchroniser {
         }
 
         private boolean verifyLocalDataWithServer(IHttpObject httpObject, IObjectDBInterface objectDBInterface, String userName, String password) {
-            return true;
+            List<Integer>       objectSyncStatuses  = null;
+            JSONObject          jsonObject;
+            JSONObject          httpResponseJSON;
+            String              jsonHTTPResponse    = "";
+            List<SyncObject>    syncObjects         = null;
+            boolean             result              = false;
+
+            //If Data posted with a Success Result, update all to Pending Verify
+            //Execute Verify for Local Data from Server
+            //Get Request based on SyncObject Names
+            objectSyncStatuses = new ArrayList<Integer>();
+            objectSyncStatuses.add(Common.SYNC_STATUS_PENDING_VERIFY);
+            jsonObject = objectDBInterface.buildJSON(Common.HTTP_TYPE_VERIFY, objectSyncStatuses, userName, password);
+            if(jsonObject != null) {
+                jsonHTTPResponse = httpObject.getHTTP(jsonObject.toString());
+                if(jsonHTTPResponse.length() > 0) {
+                    try {
+                        //Web server will insert 'New' and Update 'Updated'
+                        httpResponseJSON = new JSONObject(jsonHTTPResponse);
+                        result = httpResponseJSON.get(Common.HTTP_RESPONSE_RESULT).equals(Common.HTTP_RESPONSE_RESULT_SUCCESS);
+                        if(result) {
+                            //process records as 'Synchronized'
+                            syncObjects = objectDBInterface.parseJSONList(httpResponseJSON);
+                            objectDBInterface.updateDatabaseObjectsSyncStatus(syncObjects, Common.SYNC_STATUS_SYNCHRONIZED);
+                        }
+                    }
+                    catch (Exception e) {
+                        Log.e(this.className, "Exception parsing JSON response :: ".concat(e.getMessage()));
+                    }
+                }
+                else {
+                    //Reset Statuses to 'New' to get Inserted??
+                }
+            }
+            else {
+                Log.d(this.className, "Nothing to Verify");
+                result = true; //Nothing to verify so return true
+            }
+            return result;
         }
 
         private boolean getDataFromServer(IHttpObject httpObject, IObjectDBInterface objectDBInterface, String userName, String password) {
@@ -284,48 +322,23 @@ public class ServerSynchroniser {
         }
 
         private boolean synchronizeDataset(IHttpObject httpObject, IObjectDBInterface objectDBInterface, String userName, String password) {
-            JSONObject          jsonObject;
-            JSONObject          httpResponseJSON;
-            String              jsonHTTPResponse    = "";
-            List<Integer>       objectSyncStatuses  = null;
-            List<SyncObject>    syncObjects         = null;
             boolean             result              = false;
 
+            //Execute Posting of new data
             Log.d(this.className, "Posting Data To Server");
-
-//            //Execute Posting of new data
             result = postDataToServer(httpObject, objectDBInterface, userName, password);
 
             Log.d(this.className, "Verifying Server Data");
-            //If Data posted with a Success Result, update all to Pending Verify
-            //Execute Verify for Local Data from Server
-            //Get Request based on SyncObject Names
-            objectSyncStatuses = new ArrayList<Integer>();
-            objectSyncStatuses.add(Common.SYNC_STATUS_PENDING_VERIFY);
-            jsonObject = objectDBInterface.buildJSON(Common.HTTP_TYPE_GET, objectSyncStatuses, userName, password);
-            jsonHTTPResponse = httpObject.getHTTP(jsonObject.toString());
-            if(jsonHTTPResponse.length() > 0) {
-                try {
-                    //Web server will insert 'New' and Update 'Updated'
-                    httpResponseJSON = new JSONObject(jsonHTTPResponse);
-                    result = httpResponseJSON.get(Common.HTTP_RESPONSE_RESULT).equals(Common.HTTP_RESPONSE_RESULT_SUCCESS);
-                    if(result) {
-                        //process records as 'Synchronized'
-                        syncObjects = objectDBInterface.parseJSONList(httpResponseJSON);
-                        objectDBInterface.updateDatabaseObjectsSyncStatus(syncObjects, Common.SYNC_STATUS_SYNCHRONIZED);
-                    }
-                }
-                catch (Exception e) {
-                    Log.e(this.className, "Exception parsing JSON response :: ".concat(e.getMessage()));
-                }
-            }
-            else {
-                //Reset Statuses to 'New' to get Inserted??
-            }
+            result = verifyLocalDataWithServer(httpObject, objectDBInterface, userName, password);
 
             Log.d(this.className, "Getting Data From Server");
             //Execute Get from Server
             result = getDataFromServer(httpObject, objectDBInterface, userName, password);
+
+            //Only write sync timestamp if data fetched from server succeeded.
+            if(result) {
+                httpObject.setSyncTimestamp();
+            }
 
             Log.d(this.className, "Data Synchronised");
             return result;

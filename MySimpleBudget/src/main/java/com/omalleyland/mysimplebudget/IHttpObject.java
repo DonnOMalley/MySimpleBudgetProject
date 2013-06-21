@@ -9,4 +9,6 @@ public interface IHttpObject {
 
     public abstract String getHTTP(String json);
 
+    public abstract void setSyncTimestamp();
+
 }

@@ -25,6 +25,8 @@ public interface IObjectDBInterface {
 
     public abstract List<SyncObject> getAllDatabaseObjects();
 
+    public abstract List<SyncObject> getActiveDatabaseObjects();
+
     public abstract List<SyncObject> getUpdatedDatabaseObjects(List<Integer> objectSyncStatuses);
 
     public abstract int updateDatabaseObjects(List<SyncObject> syncObjects);

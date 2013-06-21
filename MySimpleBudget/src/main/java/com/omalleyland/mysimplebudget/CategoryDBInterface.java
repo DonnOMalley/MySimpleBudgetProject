@@ -172,6 +172,40 @@ public class CategoryDBInterface implements IObjectDBInterface {
     }
 
     @Override
+    public List<SyncObject> getActiveDatabaseObjects(){
+        SQLiteDatabase db;
+        Category category;
+        List<SyncObject> categoryList = new ArrayList<SyncObject>();
+        String[] whereArgs = new String[]{Integer.toString(Common.ACTIVE_STATUS_ACTIVE)};
+        String whereClause = Common.colCATEGORY_ACTIVE_STATUS + " = ?";
+        Log.v(className, "Querying List of Active Categories");
+
+
+        try {
+            db = dbHelper.getWritableDatabase();
+            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, whereClause, whereArgs, null, null, Common.colCATEGORY_NAME);
+            Log.d(className, "Number of Category Records = " + Integer.toString(cursor.getCount()));
+            if(cursor.moveToFirst()) {
+                do {
+                    category = (Category)cursorToSyncObject(cursor);
+                    categoryList.add(category);
+                    Log.d(className, "Store Record Returned :: id = " + Integer.toString(category.getID()) +
+                            ", name = " + category.getName() +
+                            ", serverID = " + Integer.toString(category.getServerID()) +
+                            ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
+                            ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                } while (cursor.moveToNext());
+            }
+            Log.d(className, "Category List Populated :: Size = " + Integer.toString(categoryList.size()));
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Querying Category List :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return categoryList;
+    }
+
+    @Override
     public List<SyncObject> getAllDatabaseObjects() {
         SQLiteDatabase db;
         List<SyncObject> categoryList = new ArrayList<SyncObject>();
@@ -387,15 +421,30 @@ public class CategoryDBInterface implements IObjectDBInterface {
         }
         else if(httpType == Common.HTTP_TYPE_GET) {
             try {
-                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
                 jsonObjectResult = new JSONObject();
                 jsonObjectResult.put("type", Common.HTTP_GET_JSON_TEXT);
                 jsonObjectResult.put("user", userName);
-                for(SyncObject syncObject: syncObjects) {
-                    categoryJSON = new JSONObject(((Category)syncObject).getMap());
-                    jsonCategoryArray.put(categoryJSON);
+                jsonObjectResult.put(Common.CATEGORY_JSON_ARRAY, jsonCategoryArray);    //Just an Empty Array
+                Log.d(this.className, jsonObjectResult.toString());
+            }
+            catch (Exception e) {
+                Log.e(this.className, "Exception Building Category JSON For GET :: " + e.getMessage());
+            }
+
+        }
+        else if(httpType == Common.HTTP_TYPE_VERIFY) {
+            try {
+                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
+                jsonObjectResult = new JSONObject();
+                jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
+                jsonObjectResult.put("user", userName);
+                if(syncObjects.size() > 0) {
+                    for(SyncObject syncObject: syncObjects) {
+                        categoryJSON = new JSONObject(((Category)syncObject).getMap());
+                        jsonCategoryArray.put(categoryJSON);
+                    }
+                    jsonObjectResult.put(Common.CATEGORY_JSON_ARRAY, jsonCategoryArray);
                 }
-                jsonObjectResult.put(Common.CATEGORY_JSON_ARRAY, jsonCategoryArray);
                 Log.d(this.className, jsonObjectResult.toString());
             }
             catch (Exception e) {
@@ -404,7 +453,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
 
         }
 
-        return jsonObjectResult;
+        return jsonObjectResult; //Null if no records to verify
     }
 
     public List<SyncObject> parseJSONList(JSONObject jsonObject) {

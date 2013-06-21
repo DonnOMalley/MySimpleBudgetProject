@@ -41,6 +41,11 @@ public class DebitDBInterface implements IObjectDBInterface {
     }
 
     @Override
+    public List<SyncObject> getActiveDatabaseObjects() {
+        return null;
+    }
+
+    @Override
     public List<SyncObject> getUpdatedDatabaseObjects(List<Integer> objectSyncStatuses) {
         return null;
     }

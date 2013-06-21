@@ -13,4 +13,9 @@ public class DebitHTTPObject implements IHttpObject {
     public String getHTTP(String json) {
         return null;
     }
+
+    @Override
+    public void setSyncTimestamp() {
+
+    }
 }

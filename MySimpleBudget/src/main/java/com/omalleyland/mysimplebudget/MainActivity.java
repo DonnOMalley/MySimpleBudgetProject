@@ -275,7 +275,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         List<SyncObject> categoryList;
         ArrayAdapter<SyncObject> categoryArrayAdapter;
         Log.d(className, "Getting Category List");
-        categoryList = categoryDBIntf.getAllDatabaseObjects();
+        categoryList = categoryDBIntf.getActiveDatabaseObjects();
         categoryList.add(0, new Category("<SELECT CATEGORY>"));
         categoryArrayAdapter = new ArrayAdapter<SyncObject>(this,android.R.layout.simple_spinner_item, categoryList);
         categoryArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -313,7 +313,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         List<SyncObject> storeList;
         ArrayAdapter<SyncObject> storeArrayAdapter;
         Log.d(className, "Getting Store List");
-        storeList = storeDBIntf.getAllDatabaseObjects();
+        storeList = storeDBIntf.getActiveDatabaseObjects();
         storeList.add(0, new Store("<SELECT STORE>"));
         storeArrayAdapter = new ArrayAdapter<SyncObject>(this,android.R.layout.simple_spinner_item, storeList);
         storeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

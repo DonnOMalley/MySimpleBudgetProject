@@ -174,6 +174,8 @@ public class Common {
     public static final String      HTTP_POST_JSON_TEXT                 = "post";
     public static final int         HTTP_TYPE_GET                       = 1;
     public static final String      HTTP_GET_JSON_TEXT                  = "get";
+    public static final int         HTTP_TYPE_VERIFY                    = 2;
+    public static final String      HTTP_VERIFY_JSON_TEXT               = "verify";
     public static final String      DATE_FORMAT_STRING                  = "yyyy-MM-dd HH:mm:ss";
     public static final int         HTTP_TIMEOUT                        = 5000;
 

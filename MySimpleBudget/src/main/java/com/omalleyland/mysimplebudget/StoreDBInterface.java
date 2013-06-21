@@ -168,6 +168,40 @@ public class StoreDBInterface implements IObjectDBInterface {
     }
 
     @Override
+    public List<SyncObject> getActiveDatabaseObjects(){
+        SQLiteDatabase db;
+        Store store;
+        List<SyncObject> storeList = new ArrayList<SyncObject>();
+        String[] whereArgs = new String[]{Integer.toString(Common.ACTIVE_STATUS_ACTIVE)};
+        String whereClause = Common.colSTORE_ACTIVE_STATUS + " = ?";
+        Log.v(className, "Querying List of Active Stores");
+
+
+        try {
+            db = dbHelper.getWritableDatabase();
+            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, whereClause, whereArgs, null, null, Common.colSTORE_NAME);
+            Log.d(className, "Number of Store Records = " + Integer.toString(cursor.getCount()));
+            if(cursor.moveToFirst()) {
+                do {
+                    store = (Store)cursorToSyncObject(cursor);
+                    storeList.add(store);
+                    Log.d(className, "Store Record Returned :: id = " + Integer.toString(store.getID()) +
+                            ", name = " + store.getName() +
+                            ", serverID = " + Integer.toString(store.getServerID()) +
+                            ", syncStatus = " + Integer.toString(store.getSyncStatus()) +
+                            ", activeStatus = " + Integer.toString(store.getActiveStatus()));
+                } while (cursor.moveToNext());
+            }
+            Log.d(className, "Store List Populated :: Size = " + Integer.toString(storeList.size()));
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Querying Store List :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return storeList;
+    }
+
+    @Override
     public List<SyncObject> getAllDatabaseObjects() {
         SQLiteDatabase db;
         List<SyncObject> storeList = new ArrayList<SyncObject>();
@@ -211,7 +245,7 @@ public class StoreDBInterface implements IObjectDBInterface {
         if(objectSyncStatuses != null) {
             for(Integer syncStatus : objectSyncStatuses) {
                 if(whereClause == null) {
-                    whereClause = Common.colCATEGORY_SYNC_STATUS + " IN (?";
+                    whereClause = Common.colSTORE_SYNC_STATUS + " IN (?";
                 }
                 else {
                     whereClause += ",?";
@@ -232,7 +266,7 @@ public class StoreDBInterface implements IObjectDBInterface {
         try {
             db = dbHelper.getWritableDatabase();
 
-            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, whereClause, whereArgs, null, null, Common.colSTORE_SYNC_STATUS);
+            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, whereClause, whereArgs, null, null, Common.colSTORE_SYNC_STATUS);
             Log.d(className, "Number of Store Records = " + Integer.toString(cursor.getCount()));
             if(cursor.moveToFirst()) {
                 do {
@@ -321,18 +355,18 @@ public class StoreDBInterface implements IObjectDBInterface {
                 existingStore = (Store)getObject(syncObject.getName());
                 if(existingStore!=null) {
                     values.clear();
-                    values.put(Common.colCATEGORY_ID, syncObject.getID());
-                    values.put(Common.colCATEGORY_NAME, syncObject.getName());
-                    values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
-                    values.put(Common.colCATEGORY_SYNC_STATUS, syncStatus);
-                    values.put(Common.colCATEGORY_ACTIVE_STATUS, syncObject.getActiveStatus());
+                    values.put(Common.colSTORE_ID, syncObject.getID());
+                    values.put(Common.colSTORE_NAME, syncObject.getName());
+                    values.put(Common.colSTORE_SERVER_ID, syncObject.getServerID());
+                    values.put(Common.colSTORE_SYNC_STATUS, syncStatus);
+                    values.put(Common.colSTORE_ACTIVE_STATUS, syncObject.getActiveStatus());
                     whereArgs = new String[]{syncObject.getName()};
-                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(syncObject.getID()) +
+                    Log.d(className, "Updating store Record :: id = " + Integer.toString(syncObject.getID()) +
                             ", name = " + syncObject.getName() +
                             ", serverID = " + Integer.toString(syncObject.getServerID()) +
                             ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
                             ", activeStatus = " + Integer.toString(syncObject.getActiveStatus()));
-                    updatedRecords = updatedRecords + db.update(Common.tblCATEGORIES, values, whereClause, whereArgs);
+                    updatedRecords = updatedRecords + db.update(Common.tblSTORES, values, whereClause, whereArgs);
                 }
                 else {
                     if(addObject(syncObject) > -1) {
@@ -381,15 +415,30 @@ public class StoreDBInterface implements IObjectDBInterface {
         }
         else if(httpType == Common.HTTP_TYPE_GET) {
             try {
-                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
                 jsonObjectResult = new JSONObject();
                 jsonObjectResult.put("type", Common.HTTP_GET_JSON_TEXT);
                 jsonObjectResult.put("user", userName);
-                for(SyncObject syncObject : syncObjects) {
-                    storeJSON = new JSONObject(((Store)syncObject).getMap());
-                    jsonStoreArray.put(storeJSON);
+                jsonObjectResult.put(Common.STORE_JSON_ARRAY, jsonStoreArray);    //Just an Empty Array
+                Log.d(this.className, jsonObjectResult.toString());
+            }
+            catch (Exception e) {
+                Log.e(this.className, "Exception Building Stpre JSON For GET :: " + e.getMessage());
+            }
+
+        }
+        else if(httpType == Common.HTTP_TYPE_VERIFY) {
+            try {
+                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
+                jsonObjectResult = new JSONObject();
+                jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
+                jsonObjectResult.put("user", userName);
+                if(syncObjects.size() > 0) {
+                    for(SyncObject syncObject: syncObjects) {
+                        storeJSON = new JSONObject(((Store)syncObject).getMap());
+                        jsonStoreArray.put(storeJSON);
+                    }
+                    jsonObjectResult.put(Common.STORE_JSON_ARRAY, jsonStoreArray);
                 }
-                jsonObjectResult.put(Common.STORE_JSON_ARRAY, jsonStoreArray);
                 Log.d(this.className, jsonObjectResult.toString());
             }
             catch (Exception e) {
@@ -398,21 +447,21 @@ public class StoreDBInterface implements IObjectDBInterface {
 
         }
 
-        return jsonObjectResult;
+        return jsonObjectResult; //Null if no records to verify
     }
 
     public List<SyncObject> parseJSONList(JSONObject jsonObject) {
         List<SyncObject>    syncObjects = new ArrayList<SyncObject>();
         JSONArray           jsonArray;
-        JSONObject          categoryJSONObject;
+        JSONObject          storeJSONObject;
         Store               store;
         try {
 
             jsonArray = jsonObject.getJSONArray(Common.STORE_JSON_ARRAY);
             for (int i = 0; i < jsonArray.length(); i++) {
-                categoryJSONObject = jsonArray.getJSONObject(i);
+                storeJSONObject = jsonArray.getJSONObject(i);
                 store = new Store();
-                store.JSONToObject(categoryJSONObject);
+                store.JSONToObject(storeJSONObject);
                 syncObjects.add(store);
             }
         }
