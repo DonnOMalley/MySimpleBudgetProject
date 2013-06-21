@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.view.View;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -26,10 +27,10 @@ public class CategoryDBInterface implements IObjectDBInterface {
     private final String className;
     private DBHelper dbHelper;
 
-    public CategoryDBInterface(Context ctx) {
+    public CategoryDBInterface(Context context) {
         className = getClass().toString();
         Log.v(className, "CategoryDBInterface(Context) Constructor");
-        this.context = ctx;
+        this.context = context;
         dbHelper = new DBHelper(this.context);
     }
 
@@ -38,8 +39,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
 
         Log.v(className, "Writing Cursor to Category Object");
 
-        Category category;
-        category = new Category();
+        Category category = new Category();
 
         category.setID(cursor.getInt(Common.colCATEGORY_ID_INDEX));
         category.setName(cursor.getString(Common.colCATEGORY_NAME_INDEX));
@@ -53,30 +53,26 @@ public class CategoryDBInterface implements IObjectDBInterface {
     public long addObject(SyncObject syncObject) {
         SQLiteDatabase db;
         long insertId = -1;
-        Category category = (Category)syncObject;
-        if(category != null) {
-            Log.d(className, "Adding Category To Database :: id = " + Integer.toString(category.getID()) +
-                                ", name = " + category.getName() +
-                                ", serverID = " + Integer.toString(category.getServerID()) +
-                                ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                                ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+        if(syncObject != null) {
+            Log.d(className, "Adding Category To Database :: id = " + Integer.toString(syncObject.getID()) +
+                                ", name = " + syncObject.getName() +
+                                ", serverID = " + Integer.toString(syncObject.getServerID()) +
+                                ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
+                                ", activeStatus = " + Integer.toString(syncObject.getActiveStatus()));
             try {
                 db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
-                if(category.getID() > -1) {
-                    values.put(Common.colCATEGORY_ID, category.getID());
+                values.put(Common.colCATEGORY_NAME, syncObject.getName());
+                if(syncObject.getServerID() > -1) {
+                    values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
                 }
-                values.put(Common.colCATEGORY_NAME, category.getName());
-                if(category.getServerID() > -1) {
-                    values.put(Common.colCATEGORY_SERVER_ID, category.getServerID());
-                }
-                values.put(Common.colCATEGORY_SYNC_STATUS, category.getSyncStatus());
-                values.put(Common.colCATEGORY_ACTIVE_STATUS, category.getActiveStatus());
+                values.put(Common.colCATEGORY_SYNC_STATUS, syncObject.getSyncStatus());
+                values.put(Common.colCATEGORY_ACTIVE_STATUS, syncObject.getActiveStatus());
                 Log.v(className, "Inserting into Category Table");
                 insertId = db.insert(Common.tblCATEGORIES, null, values);
             }
             catch (Exception e) {
-                Log.e(className, "Exception Adding Category :: name = '" + category.getName() + "' :: " + e.getMessage());
+                Log.e(className, "Exception Adding Category :: name = '" + syncObject.getName() + "' :: " + e.getMessage());
             }
 
             dbHelper.close();
@@ -90,22 +86,21 @@ public class CategoryDBInterface implements IObjectDBInterface {
 
     @Override
     public int deleteObject(SyncObject syncObject) {
-        Category category = (Category)syncObject;
         int result = -1;
-        if(category != null) {
+        if(syncObject != null) {
             SQLiteDatabase db;
-            Log.d(className, "Deleting Category From Database :: id = " + Integer.toString(category.getID()) +
-                                ", name = " + category.getName() +
-                                ", serverID = " + Integer.toString(category.getServerID()) +
-                                ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                                ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+            Log.d(className, "Deleting Category From Database :: id = " + Integer.toString(syncObject.getID()) +
+                                ", name = " + syncObject.getName() +
+                                ", serverID = " + Integer.toString(syncObject.getServerID()) +
+                                ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
+                                ", activeStatus = " + Integer.toString(syncObject.getActiveStatus()));
             try {
                 db = dbHelper.getWritableDatabase();
                 Log.v(className, "Performing Delete From Category Table");
-                result = db.delete(Common.tblCATEGORIES, Common.colCATEGORY_NAME + "=?", new String[] { category.getName() });
+                result = db.delete(Common.tblCATEGORIES, Common.colCATEGORY_NAME + "=?", new String[] { syncObject.getName() });
             }
             catch (Exception e) {
-                Log.e(className, "Exception Removing Category :: name = '" + category.getName() + "' :: " + e.getMessage());
+                Log.e(className, "Exception Removing Category :: name = '" + syncObject.getName() + "' :: " + e.getMessage());
             }
             dbHelper.close();
         }
@@ -127,10 +122,10 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 cursor.moveToFirst();
                 category = (Category)cursorToSyncObject(cursor);
                 Log.d(className, "Category Record Returned :: id = " + Integer.toString(category.getID()) +
-                        ", name = " + category.getName() +
-                        ", serverID = " + Integer.toString(category.getServerID()) +
-                        ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                        ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                                    ", name = " + category.getName() +
+                                    ", serverID = " + Integer.toString(category.getServerID()) +
+                                    ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
+                                    ", activeStatus = " + Integer.toString(category.getActiveStatus()));
             }
             else {
                 Log.d(className, "Category Not Found :: Cursor Record Count = " + Integer.toString(cursor.getCount()));
@@ -158,10 +153,10 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 cursor.moveToFirst();
                 category = (Category)cursorToSyncObject(cursor);
                 Log.d(className, "Category Record Returned :: id = " + Integer.toString(category.getID()) +
-                                ", name = " + category.getName() +
-                                ", serverID = " + Integer.toString(category.getServerID()) +
-                                ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                                ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                                    ", name = " + category.getName() +
+                                    ", serverID = " + Integer.toString(category.getServerID()) +
+                                    ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
+                                    ", activeStatus = " + Integer.toString(category.getActiveStatus()));
             }
             else {
                 Log.d(className, "Category Not Found :: Cursor Record Count = " + Integer.toString(cursor.getCount()));
@@ -207,33 +202,52 @@ public class CategoryDBInterface implements IObjectDBInterface {
     }
 
     @Override
-    public List<SyncObject> getUpdatedDatabaseObjects(boolean includePendingVerify) {
-        return getUpdatedDatabaseObjects();
-    }
-
-        @Override
-        public List<SyncObject> getUpdatedDatabaseObjects() {
+    public List<SyncObject> getUpdatedDatabaseObjects(List<Integer> objectSyncStatuses) {
         SQLiteDatabase db;
         List<SyncObject> categoryList = new ArrayList<SyncObject>();
-        String whereClause = Common.colCATEGORY_SYNC_STATUS + " IN (?,?)";
-        String[] whereArgs = {Integer.toString(Common.SYNC_STATUS_NEW), Integer.toString(Common.SYNC_STATUS_UPDATED)};
+        String whereClause = null;
+        List<String> statusListStrings = new ArrayList<String>();
+        String[] whereArgs = null;
+
+        //Populate Where Clause/Arguments if SyncStatuses were provided
+        // If no statuses were passed
+        Log.d(this.className, "Building SQLite Where Clause");
+        if(objectSyncStatuses != null) {
+            for(Integer syncStatus : objectSyncStatuses) {
+                if(whereClause == null) {
+                    whereClause = Common.colCATEGORY_SYNC_STATUS + " IN (?";
+                }
+                else {
+                    whereClause += ",?";
+                }
+                statusListStrings.add(Integer.toString(syncStatus));
+            }
+            if(whereClause != null) {
+                whereClause += ")";
+            }
+            whereArgs = new String[statusListStrings.size()];
+            statusListStrings.toArray(whereArgs);
+        }
 
         Category category;
-        Log.v(className, "Querying List of All Categories To Post to Server");
+        if(whereArgs != null) {
+
+            Log.v(className, "Querying List of Categories from Local Database based on SyncStatuses :: ".concat(statusListStrings.toString()));
+        }
         try {
             db = dbHelper.getWritableDatabase();
 
             Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, whereClause, whereArgs, null, null, Common.colCATEGORY_SYNC_STATUS);
             Log.d(className, "Number of Category Records = " + Integer.toString(cursor.getCount()));
-            if(cursor.moveToFirst()) {
+            if(cursor.getCount() > 0 && cursor.moveToFirst()) {
                 do {
                     category = (Category)cursorToSyncObject(cursor);
                     categoryList.add(category);
                     Log.d(className, "Category Record Returned :: id = " + Integer.toString(category.getID()) +
-                                    ", name = " + category.getName() +
-                                    ", serverID = " + Integer.toString(category.getServerID()) +
-                                    ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                                    ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                                        ", name = " + category.getName() +
+                                        ", serverID = " + Integer.toString(category.getServerID()) +
+                                        ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
+                                        ", activeStatus = " + Integer.toString(category.getActiveStatus()));
                 } while (cursor.moveToNext());
             }
             Log.d(className, "Category List Populated :: Size = " + Integer.toString(categoryList.size()));
@@ -245,10 +259,8 @@ public class CategoryDBInterface implements IObjectDBInterface {
         return categoryList;
     }
 
-
-
     @Override
-    public int updateDatabaseObjectsSyncStatus(List<SyncObject> syncObjects) {
+    public int updateDatabaseObjects(List<SyncObject> syncObjects) {
         //For each record in the List<Category>, update SQLite
         SQLiteDatabase db;
         int updatedRecords = 0;
@@ -258,32 +270,31 @@ public class CategoryDBInterface implements IObjectDBInterface {
 
         Log.v(className, "Updating Categories with Values from List");
         try {
-            db = dbHelper.getWritableDatabase();
 
             Category existingCategory;
             for(SyncObject syncObject : syncObjects) {
-                Category category = (Category)syncObject;
                 //Check for category to exist,
                 //  if exists, update
                 //  else add
-                existingCategory = (Category)getObject(category.getName());
+                existingCategory = (Category)getObject(syncObject.getName());
                 if(existingCategory!=null) {
+                    db = dbHelper.getWritableDatabase();
                     values.clear();
-                    values.put(Common.colCATEGORY_ID, category.getID());
-                    values.put(Common.colCATEGORY_NAME, category.getName());
-                    values.put(Common.colCATEGORY_SERVER_ID, category.getServerID());
-                    values.put(Common.colCATEGORY_SYNC_STATUS, category.getSyncStatus());
-                    values.put(Common.colCATEGORY_ACTIVE_STATUS, category.getActiveStatus());
-                    whereArgs = new String[]{category.getName()};
-                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(category.getID()) +
-                            ", name = " + category.getName() +
-                            ", serverID = " + Integer.toString(category.getServerID()) +
-                            ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                            ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                    values.put(Common.colCATEGORY_NAME, syncObject.getName());
+                    values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
+                    values.put(Common.colCATEGORY_SYNC_STATUS, syncObject.getSyncStatus());
+                    values.put(Common.colCATEGORY_ACTIVE_STATUS, syncObject.getActiveStatus());
+                    whereArgs = new String[]{syncObject.getName()};
+                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(syncObject.getID()) +
+                            ", name = " + syncObject.getName() +
+                            ", serverID = " + Integer.toString(syncObject.getServerID()) +
+                            ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
+                            ", activeStatus = " + Integer.toString(syncObject.getActiveStatus()));
                     updatedRecords = updatedRecords + db.update(Common.tblCATEGORIES, values, whereClause, whereArgs);
+                    dbHelper.close();
                 }
                 else {
-                    if(addObject(category) > -1) {
+                    if(addObject(syncObject) > -1) {
                         updatedRecords += 1;
                     }
                 }
@@ -293,7 +304,6 @@ public class CategoryDBInterface implements IObjectDBInterface {
         catch (Exception e) {
             Log.e(className, "Exception Updating Categories from Server :: " + e.getMessage());
         }
-        dbHelper.close();
         return updatedRecords;
     }
 
@@ -308,32 +318,31 @@ public class CategoryDBInterface implements IObjectDBInterface {
 
         Log.v(className, "Updating Categories with Values from List");
         try {
-            db = dbHelper.getWritableDatabase();
 
             Category existingCategory;
             for(SyncObject syncObject : syncObjects) {
-                Category category = (Category)syncObject;
                 //Check for category to exist,
                 //  if exists, update
                 //  else add
-                existingCategory = (Category)getObject(category.getName());
+                existingCategory = (Category)getObject(syncObject.getName());
                 if(existingCategory!=null) {
+                    db = dbHelper.getWritableDatabase();
                     values.clear();
-                    values.put(Common.colCATEGORY_ID, category.getID());
-                    values.put(Common.colCATEGORY_NAME, category.getName());
-                    values.put(Common.colCATEGORY_SERVER_ID, category.getServerID());
+                    values.put(Common.colCATEGORY_NAME, syncObject.getName());
+                    values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
                     values.put(Common.colCATEGORY_SYNC_STATUS, syncStatus);
-                    values.put(Common.colCATEGORY_ACTIVE_STATUS, category.getActiveStatus());
-                    whereArgs = new String[]{category.getName()};
-                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(category.getID()) +
-                            ", name = " + category.getName() +
-                            ", serverID = " + Integer.toString(category.getServerID()) +
-                            ", syncStatus = " + Integer.toString(category.getSyncStatus()) +
-                            ", activeStatus = " + Integer.toString(category.getActiveStatus()));
+                    values.put(Common.colCATEGORY_ACTIVE_STATUS, syncObject.getActiveStatus());
+                    whereArgs = new String[]{syncObject.getName()};
+                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(syncObject.getID()) +
+                            ", name = " + syncObject.getName() +
+                            ", serverID = " + Integer.toString(syncObject.getServerID()) +
+                            ", syncStatus = " + Integer.toString(syncStatus) +
+                            ", activeStatus = " + Integer.toString(syncObject.getActiveStatus()));
                     updatedRecords = updatedRecords + db.update(Common.tblCATEGORIES, values, whereClause, whereArgs);
+                    dbHelper.close();
                 }
                 else {
-                    if(addObject(category) > -1) {
+                    if(addObject(syncObject) > -1) {
                         updatedRecords += 1;
                     }
                 }
@@ -343,46 +352,55 @@ public class CategoryDBInterface implements IObjectDBInterface {
         catch (Exception e) {
             Log.e(className, "Exception Updating Categories from Server :: " + e.getMessage());
         }
-        dbHelper.close();
         return updatedRecords;
     }
 
     @Override
-    public JSONObject buildJSON(int httpType, String userName, String password) {
-        return buildJSON(httpType, false, userName, password);
-    }
-
-    @Override
-    public JSONObject buildJSON(int httpType, boolean includePendingVerify, String userName, String password) {
-        List<SyncObject> syncObjects = new ArrayList<SyncObject>();
+    public JSONObject buildJSON(int httpType, List<Integer> objectSyncStatuses, String userName, String password) {
+        List<SyncObject> syncObjects    = new ArrayList<SyncObject>();
         Category category;
-        JSONObject jsonObjectResult = null;
-        JSONObject categoryJSON;
-        JSONArray jsonCategoryArray;
+        JSONObject  jsonObjectResult    = null;
+        JSONObject  categoryJSON;
+        JSONArray   jsonCategoryArray   = new JSONArray();
 
         if(httpType == Common.HTTP_TYPE_POST) {
-            syncObjects = getUpdatedDatabaseObjects(includePendingVerify);
+            Log.d(this.className, "Getting Data for HTTP Post");
+            syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
+            Log.d(this.className, "Objects to Post retrieved");
             if(syncObjects.size() > 0) {
-                jsonObjectResult = new JSONObject();
-                jsonCategoryArray = new JSONArray();
-
                 try {
+                    Log.d(this.className, "Building JSON Object");
+                    jsonObjectResult = new JSONObject();
                     jsonObjectResult.put("type", Common.HTTP_POST_JSON_TEXT);
                     jsonObjectResult.put("user", userName);
-                    for(int i = 0; i < syncObjects.size(); i++) {
-                        category = (Category)syncObjects.get(i);
-                        categoryJSON = new JSONObject(category.getMap());
+                    for(SyncObject syncObject: syncObjects) {
+                        categoryJSON = new JSONObject(((Category)syncObject).getMap());
                         jsonCategoryArray.put(categoryJSON);
                     }
-                    jsonObjectResult.put("categoryArray", jsonCategoryArray);
+                    jsonObjectResult.put(Common.CATEGORY_JSON_ARRAY, jsonCategoryArray);
                     Log.d(this.className, jsonObjectResult.toString());
                 }
                 catch (Exception e) {
-                    Log.e(this.className, "Exception Building Category JSON :: " + e.getMessage());
+                    Log.e(this.className, "Exception Building Category JSON For POST :: " + e.getMessage());
                 }
             }
         }
         else if(httpType == Common.HTTP_TYPE_GET) {
+            try {
+                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
+                jsonObjectResult = new JSONObject();
+                jsonObjectResult.put("type", Common.HTTP_GET_JSON_TEXT);
+                jsonObjectResult.put("user", userName);
+                for(SyncObject syncObject: syncObjects) {
+                    categoryJSON = new JSONObject(((Category)syncObject).getMap());
+                    jsonCategoryArray.put(categoryJSON);
+                }
+                jsonObjectResult.put(Common.CATEGORY_JSON_ARRAY, jsonCategoryArray);
+                Log.d(this.className, jsonObjectResult.toString());
+            }
+            catch (Exception e) {
+                Log.e(this.className, "Exception Building Category JSON For GET :: " + e.getMessage());
+            }
 
         }
 

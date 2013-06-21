@@ -178,5 +178,6 @@ public class Common {
     public static final int         HTTP_TIMEOUT                        = 5000;
 
     public static final String      CATEGORY_JSON_ARRAY                 = "categoryArray";
+    public static final String      STORE_JSON_ARRAY                    = "storeArray";
 
 }

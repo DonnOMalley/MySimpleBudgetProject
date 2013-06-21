@@ -221,6 +221,9 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             }
             else if(userName.length() > 0 && password.length() > 0) {
                 Log.d(className, "Starting Async Login Attempt");
+                if(!this.serverAddress.endsWith("/")) {
+                    this.serverAddress = this.serverAddress.concat("/");
+                }
                 if(validateLogin == null) {
                     validateLogin = new ValidateLogin(this, this, this.serverAddress.concat(this.loginValidationPage), userName, password);
                 }
@@ -253,10 +256,10 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         else if(requestCode == Common.CREATE_STORE_RESULT_CODE) {
             Log.v(className, "Store Activity Result :: " + Integer.toString(resultCode));
             if(resultCode == RESULT_OK) {
-                String selectedStore = ((Store)spStoreSpinner.getSelectedItem()).getStoreName();
+                String selectedStore = ((Store)spStoreSpinner.getSelectedItem()).getName();
                 loadStoreSpinner();
                 for(int i=0; i<spStoreSpinner.getAdapter().getCount(); i++) {
-                    if(selectedStore.equals(((Store)spStoreSpinner.getItemAtPosition(i)).getStoreName())) {
+                    if(selectedStore.equals(((Store)spStoreSpinner.getItemAtPosition(i)).getName())) {
                         spStoreSpinner.setSelection(i);
                         break;
                     }
@@ -307,12 +310,12 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
     private void loadStoreSpinner() {
         Log.d(className, "Loading Store Spinner");
         StoreDBInterface storeDBIntf = new StoreDBInterface(this);
-        List<Store> storeList;
-        ArrayAdapter<Store> storeArrayAdapter;
+        List<SyncObject> storeList;
+        ArrayAdapter<SyncObject> storeArrayAdapter;
         Log.d(className, "Getting Store List");
-        storeList = storeDBIntf.getAllStores();
+        storeList = storeDBIntf.getAllDatabaseObjects();
         storeList.add(0, new Store("<SELECT STORE>"));
-        storeArrayAdapter = new ArrayAdapter<Store>(this,android.R.layout.simple_spinner_item, storeList);
+        storeArrayAdapter = new ArrayAdapter<SyncObject>(this,android.R.layout.simple_spinner_item, storeList);
         storeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spStoreSpinner.setOnItemSelectedListener(new onStoreSelected());
@@ -423,7 +426,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             //Get Selected Store by Name
             Log.d(className, "Getting Selected Store");
             if(spStoreSpinner.getCount() > 0) {
-                selectedStore = ((Store)spStoreSpinner.getSelectedItem()).getStoreName();
+                selectedStore = ((Store)spStoreSpinner.getSelectedItem()).getName();
             }
 
             //Reload Store Spinner and select the same one that was originally selected
@@ -431,7 +434,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             loadStoreSpinner();
             if(selectedStore.length() > 0) {
                 for(int i=0; i<spStoreSpinner.getAdapter().getCount(); i++) {
-                    if(selectedStore.equals(((Store)spStoreSpinner.getItemAtPosition(i)).getStoreName())) {
+                    if(selectedStore.equals(((Store)spStoreSpinner.getItemAtPosition(i)).getName())) {
                         spStoreSpinner.setSelection(i);
                         break;
                     }

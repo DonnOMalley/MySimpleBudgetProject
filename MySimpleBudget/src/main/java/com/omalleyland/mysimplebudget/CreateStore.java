@@ -23,7 +23,7 @@ public class CreateStore extends Activity {
         if(etStoreName.getText().toString().length() > 0) {
             Store store = new Store(etStoreName.getText().toString());
             StoreDBInterface storeDBIntfc = new StoreDBInterface(getApplicationContext());
-            storeDBIntfc.addStore(store);
+            storeDBIntfc.addObject(store);
             setResult(RESULT_OK);
             finish();
         }

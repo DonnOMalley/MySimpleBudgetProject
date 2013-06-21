@@ -93,9 +93,9 @@ public class SyncObject {
 
     protected void JSONToObject(JSONObject jsonObject) {
         try {
-            this.serverID = jsonObject.getInt("id");
-            this.name = jsonObject.getString("name");
-            this.activeStatus = jsonObject.getInt("activeStatus");
+            this.serverID       = jsonObject.getInt("id");
+            this.name           = jsonObject.getString("name");
+            this.activeStatus   = jsonObject.getInt("activeStatus");
         }
         catch (Exception e) {
             //Do nothing for now

@@ -19,45 +19,45 @@ public class Category extends SyncObject{
 
     public Category() {
         super(Common.SYNC_OBJECT_TYPE_CATEGORY);
-        this.className  = getClass().getName();
+        this.className      = getClass().toString();
     }
 
     public Category(String categoryName) {
         super(Common.SYNC_OBJECT_TYPE_CATEGORY);
-        this.name          = categoryName;
-        this.className     = getClass().getName();
+        this.className      = getClass().toString();
+        this.name           = categoryName;
     }
 
     public Category(String categoryName, int serverID) {
         super(Common.SYNC_OBJECT_TYPE_CATEGORY);
-        super.name          = categoryName;
-        super.serverID      = serverID;
-        super.className     = getClass().getName();
+        this.className      = getClass().toString();
+        this.name           = categoryName;
+        this.serverID       = serverID;
     }
 
     public Category(int id, String categoryName) {
         super(Common.SYNC_OBJECT_TYPE_CATEGORY);
-        super.id            = id;
-        super.name          = categoryName;
-        super.className     = getClass().getName();
+        this.className      = getClass().toString();
+        this.id             = id;
+        this.name           = categoryName;
     }
 
     public Category(int id, String categoryName, int serverID) {
         super(Common.SYNC_OBJECT_TYPE_CATEGORY);
-        super.id            = id;
-        super.name          = categoryName;
-        super.serverID      = serverID;
-        super.className     = getClass().getName();
+        this.className      = getClass().toString();
+        this.id             = id;
+        this.name           = categoryName;
+        this.serverID       = serverID;
     }
 
     public Category(int id, String categoryName, int serverID, int syncStatus, int activeStatus) {
         super(Common.SYNC_OBJECT_TYPE_CATEGORY);
-        super.id            = id;
-        super.name          = categoryName;
-        super.serverID      = serverID;
-        super.className     = getClass().getName();
-        super.syncStatus    = syncStatus;
-        super.activeStatus  = activeStatus;
+        this.className      = getClass().toString();
+        this.id             = id;
+        this.name           = categoryName;
+        this.serverID       = serverID;
+        this.syncStatus     = syncStatus;
+        this.activeStatus   = activeStatus;
     }
 
     public Map<String, String> getMap() {
