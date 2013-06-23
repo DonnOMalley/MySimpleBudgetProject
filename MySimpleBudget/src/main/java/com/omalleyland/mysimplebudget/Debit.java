@@ -16,7 +16,7 @@ public class Debit extends SyncObject {
     private int localStoreID;
     private int storeID;
     private String dateString;
-    private float amount;
+    private double amount;
     private String comment;
     private String entryOnString;
 
@@ -74,11 +74,11 @@ public class Debit extends SyncObject {
         this.dateString = dateString;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -101,13 +101,15 @@ public class Debit extends SyncObject {
     @Override
     protected void JSONToObject(JSONObject jsonObject) {
         try {
-            this.id             = jsonObject.getInt("id");
-            this.categoryID     = jsonObject.getInt("category_id");
-            this.storeID        = jsonObject.getInt("store_id");
-            this.dateString     = jsonObject.getString("debit_date");
-            this.amount         = Float.parseFloat(jsonObject.getString("amount"));
-            this.comment        = jsonObject.getString("comment");
-            this.entryOnString  = jsonObject.getString("entry_on");
+            this.id                 = jsonObject.getInt("id");
+            this.localCategoryID    = jsonObject.getInt("local_category_id");
+            this.categoryID         = jsonObject.getInt("category_id");
+            this.localStoreID       = jsonObject.getInt("local_store_id");
+            this.storeID            = jsonObject.getInt("store_id");
+            this.dateString         = jsonObject.getString("debit_date");
+            this.amount             = Double.parseDouble(jsonObject.getString("amount"));
+            this.comment            = jsonObject.getString("comment");
+            this.entryOnString      = jsonObject.getString("entry_on");
         }
         catch (Exception e) {
             //Do nothing for now
@@ -118,10 +120,12 @@ public class Debit extends SyncObject {
         Map<String, String> debitMap = new HashMap<String, String>();
         debitMap.put(Common.colDEBIT_PURCHASER_ID, Integer.toString(this.userID));
         debitMap.put(Common.colDEBIT_ID, Integer.toString(this.id));
+        debitMap.put(Common.colDEBIT_LOCAL_CATEGORY_ID, Integer.toString(this.localCategoryID));
         debitMap.put(Common.colDEBIT_SERVER_CATEGORY_ID, Integer.toString(this.categoryID));
         debitMap.put(Common.colDEBIT_SERVER_STORE_ID, Integer.toString(this.storeID));
+        debitMap.put(Common.colDEBIT_LOCAL_STORE_ID, Integer.toString(this.localStoreID));
         debitMap.put(Common.colDEBIT_DEBIT_DATE, this.dateString);
-        debitMap.put(Common.colDEBIT_DEBIT_AMOUNT, Float.toString(this.amount));
+        debitMap.put(Common.colDEBIT_DEBIT_AMOUNT, Double.toString(this.amount));
         debitMap.put(Common.colDEBIT_COMMENT, this.comment);
         debitMap.put(Common.colDEBIT_ENTRY_ON, this.entryOnString);
 

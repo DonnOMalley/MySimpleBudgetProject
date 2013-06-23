@@ -117,7 +117,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
         try {
             db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Category by ID = " + Integer.toString(id));
-            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_ID + " = " + id, null, null, null, null);
+            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_ID + " = ?", new String[]{Integer.toString(id)}, null, null, null);
             if(cursor.getCount() == 1) {
                 cursor.moveToFirst();
                 category = (Category)cursorToSyncObject(cursor);
@@ -148,7 +148,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
         try {
             db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Category by Name = " + name);
-            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_NAME + " = '" + name + "'", null, null, null, null);
+            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_NAME + " = ?", new String[]{name}, null, null, null);
             if(cursor.getCount()== 1) {
                 cursor.moveToFirst();
                 category = (Category)cursorToSyncObject(cursor);
@@ -448,7 +448,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 Log.d(this.className, jsonObjectResult.toString());
             }
             catch (Exception e) {
-                Log.e(this.className, "Exception Building Category JSON For GET :: " + e.getMessage());
+                Log.e(this.className, "Exception Building Category JSON For VERIFY :: " + e.getMessage());
             }
 
         }

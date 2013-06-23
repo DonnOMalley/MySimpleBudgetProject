@@ -89,6 +89,7 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
         menu.findItem(R.id.action_create_category).setVisible(false);
         menu.findItem(R.id.action_create_store).setVisible(false);
         menu.findItem(R.id.action_upload_debits).setVisible(false);
+        menu.findItem(R.id.action_full_sync).setVisible(false);
         return true;
     }
 

@@ -12,6 +12,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import java.text.SimpleDateFormat;
@@ -70,8 +72,12 @@ public class StoreHTTPObject implements IHttpObject {
     public String postHTTP(String json) {
         String httpResponse = "";
         List<NameValuePair> nameValuePairs;
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, Common.HTTP_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, Common.HTTP_TIMEOUT);
 
         httpPost = new HttpPost(this.syncPage);
+        httpPost.setParams(httpParams);
         nameValuePairs = new ArrayList<NameValuePair>(3);
         nameValuePairs.add(new BasicNameValuePair("username", this.userName));
         nameValuePairs.add(new BasicNameValuePair("password", this.password));
@@ -83,11 +89,11 @@ public class StoreHTTPObject implements IHttpObject {
             httpClient = new DefaultHttpClient();
             HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
             httpResponse = EntityUtils.toString(httpEntity);
+            Log.d(this.className, "http Post Response = ".concat(httpResponse.toString()));
         }
         catch (Exception e) {
             Log.e(this.className, "Exception building/executing HTTP Post :: ".concat(e.getMessage()));
         }
-        Log.d(this.className, "http Post Response = ".concat(httpResponse.toString()));
 
         return httpResponse;
     }
@@ -96,8 +102,12 @@ public class StoreHTTPObject implements IHttpObject {
     public String getHTTP(String json) {
         String httpResponse = "";
         List<NameValuePair> nameValuePairs;
+        HttpParams httpParams = new BasicHttpParams();
+        HttpConnectionParams.setConnectionTimeout(httpParams, Common.HTTP_TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, Common.HTTP_TIMEOUT);
 
         httpPost = new HttpPost(this.syncPage);
+        httpPost.setParams(httpParams);
         nameValuePairs = new ArrayList<NameValuePair>(3);
         nameValuePairs.add(new BasicNameValuePair("username", this.userName));
         nameValuePairs.add(new BasicNameValuePair("password", this.password));
@@ -110,11 +120,11 @@ public class StoreHTTPObject implements IHttpObject {
             httpClient = new DefaultHttpClient();
             HttpEntity httpEntity = httpClient.execute(httpPost).getEntity();
             httpResponse = EntityUtils.toString(httpEntity);
+            Log.d(this.className, "http Get Response = ".concat(httpResponse.toString()));
         }
         catch (Exception e) {
             Log.e(this.className, "Exception building/executing HTTP Post :: ".concat(e.getMessage()));
         }
-        Log.d(this.className, "http Get Response = ".concat(httpResponse.toString()));
 
         return httpResponse;
     }

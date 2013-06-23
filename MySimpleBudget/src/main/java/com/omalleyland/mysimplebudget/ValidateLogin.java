@@ -152,8 +152,8 @@ public class ValidateLogin {
             Log.v(className, "Starting Background Login");
             HttpClient httpclient = new DefaultHttpClient();
             HttpParams httpParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
-            HttpConnectionParams.setSoTimeout(httpParams, 5000);
+            HttpConnectionParams.setConnectionTimeout(httpParams, Common.HTTP_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpParams, Common.HTTP_TIMEOUT);
 
             HttpPost httppost = new HttpPost(validationServer);
             String responseString = "";

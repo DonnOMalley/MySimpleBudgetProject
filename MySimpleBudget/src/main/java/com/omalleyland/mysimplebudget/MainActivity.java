@@ -166,6 +166,12 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             case R.id.action_login_preferences:
                 startActivity(new Intent(MainActivity.this, Preferences.class));
                 return true;
+            case R.id.action_full_sync:
+                prefs.edit().putString(Common.LAST_CATEGORY_SYNC_PREFERENCE, Integer.toString(Common.UNKNOWN)).commit();
+                prefs.edit().putString(Common.LAST_STORE_SYNC_PREFERENCE, Integer.toString(Common.UNKNOWN)).commit();
+                //Force Synchronization again
+                synchroniseConfiguration();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -356,8 +362,8 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         //      **Could maybe have one call back UpdateConfigurations() where UI Spinners are updated
         if(serverSynchroniser == null) {
             serverSynchroniser = new ServerSynchroniser(this, this);
-            serverSynchroniser.synchroniseData();
         }
+        serverSynchroniser.synchroniseData();
     }
 
     /*

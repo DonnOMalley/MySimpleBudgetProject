@@ -160,10 +160,20 @@ public class ServerSynchroniser {
                     }
 
 
-                    publishProgress(syncResult + '\n' + "Processing Debits...");
-                    Thread.sleep(2000);
 
-                    publishProgress("Done");
+                    //Synchronise Debits
+                    publishProgress(syncResult + '\n' + "Processing Debits...");
+                    httpObject = new DebitHTTPObject(this.context, serverAddress, userName, password);
+                    dbInterface = new DebitDBInterface(this.context);
+                    syncResultFlag = synchronizeDataset(httpObject, dbInterface, userName, password);
+                    if(syncResultFlag) {
+                        syncResult = "Done";
+                    }
+                    else {
+                        syncResult = "Error";
+                    }
+
+                    publishProgress(syncResult);
                 }
                 catch(Exception e) {
                     Log.e(this.className, "Exception Synchronising :: ".concat(e.getMessage()));
@@ -291,7 +301,7 @@ public class ServerSynchroniser {
         }
 
         private boolean getDataFromServer(IHttpObject httpObject, IObjectDBInterface objectDBInterface, String userName, String password) {
-            JSONObject          jsonObject;
+            JSONObject          jsonObject          = null;
             JSONObject          httpResponseJSON;
             String              jsonHTTPResponse    = "";
             List<Integer>       objectSyncStatuses  = null;
@@ -300,22 +310,24 @@ public class ServerSynchroniser {
 
             //Execute Get (New from Server)
             jsonObject = objectDBInterface.buildJSON(Common.HTTP_TYPE_GET, objectSyncStatuses, userName, password);
-            jsonHTTPResponse = httpObject.getHTTP(jsonObject.toString());
-            if(jsonHTTPResponse.length() > 0) {
-                try {
-                    httpResponseJSON = new JSONObject(jsonHTTPResponse);
-                    result = httpResponseJSON.get(Common.HTTP_RESPONSE_RESULT).equals(Common.HTTP_RESPONSE_RESULT_SUCCESS);
-                    if(result) {
-                        //process records as 'PENDING_VERIFY'
-                        syncObjects = objectDBInterface.parseJSONList(httpResponseJSON);
-                        objectDBInterface.updateDatabaseObjectsSyncStatus(syncObjects, Common.SYNC_STATUS_SYNCHRONIZED);
+            if(jsonObject != null) {
+                jsonHTTPResponse = httpObject.getHTTP(jsonObject.toString());
+                if(jsonHTTPResponse.length() > 0) {
+                    try {
+                        httpResponseJSON = new JSONObject(jsonHTTPResponse);
+                        result = httpResponseJSON.get(Common.HTTP_RESPONSE_RESULT).equals(Common.HTTP_RESPONSE_RESULT_SUCCESS);
+                        if(result) {
+                            //process records as 'PENDING_VERIFY'
+                            syncObjects = objectDBInterface.parseJSONList(httpResponseJSON);
+                            objectDBInterface.updateDatabaseObjectsSyncStatus(syncObjects, Common.SYNC_STATUS_SYNCHRONIZED);
+                        }
+                        else {
+                            result = false;
+                        }
                     }
-                    else {
-                        result = false;
+                    catch (Exception e) {
+                        Log.e(this.className, "Exception parsing JSON response :: ".concat(e.getMessage()));
                     }
-                }
-                catch (Exception e) {
-                    Log.e(this.className, "Exception parsing JSON response :: ".concat(e.getMessage()));
                 }
             }
             return  result;

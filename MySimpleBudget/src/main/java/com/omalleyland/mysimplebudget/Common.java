@@ -14,7 +14,7 @@ public class Common {
     public static final int         UNKNOWN                             = -1;
 
     /* SQLite DB Constants */
-    public static final int         DATABASE_VERSION                    = 2;
+    public static final int         DATABASE_VERSION                    = 4;
     public static final String      DATABASE_NAME                       = APPLICATION_NAME + "DB";
 
     /* Database Table Status Constants */
@@ -79,7 +79,7 @@ public class Common {
     public static final String      tblDebits                           = "Debits";
     public static final String      colDEBIT_ID                         = "id";
     public static final int         colDEBIT_ID_INDEX                   = 0;
-    public static final String      colDEBIT_PURCHASER_ID               = "purchaser_id";
+    public static final String      colDEBIT_PURCHASER_ID               = "purchaserID";
     public static final int         colDEBIT_PURCHASER_ID_INDEX         = 1;
     public static final String      colDEBIT_LOCAL_CATEGORY_ID          = "localCategoryID";
     public static final int         colDEBIT_LOCAL_CATEGORY_ID_INDEX    = 2;
@@ -97,6 +97,7 @@ public class Common {
     public static final int         colDEBIT_DEBIT_AMOUNT_INDEX         = 8;
     public static final String      colDEBIT_COMMENT                    = "comment";
     public static final int         colDEBIT_COMMENT_INDEX              = 9;
+    public static final String      colDEBIT_SYNC_STATUS                = "syncStatus";
     public static final String[]    colDEBITS_ALL                       = {colDEBIT_ID,
                                                                             colDEBIT_PURCHASER_ID,
                                                                             colDEBIT_LOCAL_CATEGORY_ID,
@@ -106,18 +107,20 @@ public class Common {
                                                                             colDEBIT_DEBIT_DATE,
                                                                             colDEBIT_ENTRY_ON,
                                                                             colDEBIT_DEBIT_AMOUNT,
-            colDEBIT_COMMENT};
+                                                                            colDEBIT_COMMENT,
+                                                                            colSTORE_SYNC_STATUS};
     public static final String      CREATE_DEBIT_TABLE                  = "CREATE TABLE " + tblDebits + "(" +
                                                                             colDEBIT_ID + " integer PRIMARY KEY, " +
-                                                                            colDEBIT_PURCHASER_ID + "integer NOT NULL, " +
+                                                                            colDEBIT_PURCHASER_ID + " integer NOT NULL, " +
                                                                             colDEBIT_LOCAL_CATEGORY_ID + " integer NOT NULL, " +
                                                                             colDEBIT_SERVER_CATEGORY_ID + " integer NOT NULL, " +
                                                                             colDEBIT_LOCAL_STORE_ID + " integer NOT NULL, " +
                                                                             colDEBIT_SERVER_STORE_ID + " integer NOT NULL, " +
                                                                             colDEBIT_DEBIT_DATE + " text NOT NULL, " +
                                                                             colDEBIT_ENTRY_ON + " text NOT NULL, " +
-                                                                            colDEBIT_DEBIT_AMOUNT + " decimal(10,2) NOT NULL," +
-                                                                            colDEBIT_COMMENT + " text NULL);";
+                                                                            colDEBIT_DEBIT_AMOUNT + " text NOT NULL," +
+                                                                            colDEBIT_COMMENT + " text NULL, " +
+                                                                            colSTORE_SYNC_STATUS + " integer NOT NULL);";
     public static final String      DROP_DEBIT_TABLE                    = "DROP TABLE IF EXISTS " + tblDebits;
 
     /* Shared Preference Keys - Matches Preferences Activity UI Object Names */
@@ -178,9 +181,10 @@ public class Common {
     public static final int         HTTP_TYPE_VERIFY                    = 2;
     public static final String      HTTP_VERIFY_JSON_TEXT               = "verify";
     public static final String      DATE_FORMAT_STRING                  = "yyyy-MM-dd HH:mm:ss";
-    public static final int         HTTP_TIMEOUT                        = 5000;
+    public static final int         HTTP_TIMEOUT                        = 10000;
 
     public static final String      CATEGORY_JSON_ARRAY                 = "categoryArray";
     public static final String      STORE_JSON_ARRAY                    = "storeArray";
+    public static final String      DEBIT_JSON_ARRAY                    = "debitArray";
 
 }

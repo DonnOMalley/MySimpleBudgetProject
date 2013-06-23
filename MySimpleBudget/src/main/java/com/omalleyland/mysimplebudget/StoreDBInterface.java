@@ -111,7 +111,7 @@ public class StoreDBInterface implements IObjectDBInterface {
         try {
             db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Store by ID = " + Integer.toString(id));
-            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_ID + " = " + id, null, null, null, null);
+            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_NAME + " = ?", new String[]{Integer.toString(id)}, null, null, null);
             if(cursor.getCount() == 1) {
                 cursor.moveToFirst();
                 store = (Store)cursorToSyncObject(cursor);
@@ -143,7 +143,7 @@ public class StoreDBInterface implements IObjectDBInterface {
         try {
             db = dbHelper.getWritableDatabase();
             Log.v(className, "Querying Store by Name = " + storeName);
-            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_NAME + " = '" + storeName + "'", null, null, null, null);
+            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_NAME + " = ?", new String[]{storeName}, null, null, null);
             if(cursor.getCount() == 1) {
                 cursor.moveToFirst();
                 store = (Store)cursorToSyncObject(cursor);
@@ -429,10 +429,10 @@ public class StoreDBInterface implements IObjectDBInterface {
         else if(httpType == Common.HTTP_TYPE_VERIFY) {
             try {
                 syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
-                jsonObjectResult = new JSONObject();
-                jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
-                jsonObjectResult.put("user", userName);
                 if(syncObjects.size() > 0) {
+                    jsonObjectResult = new JSONObject();
+                    jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
+                    jsonObjectResult.put("user", userName);
                     for(SyncObject syncObject: syncObjects) {
                         storeJSON = new JSONObject(((Store)syncObject).getMap());
                         jsonStoreArray.put(storeJSON);
@@ -442,7 +442,7 @@ public class StoreDBInterface implements IObjectDBInterface {
                 Log.d(this.className, jsonObjectResult.toString());
             }
             catch (Exception e) {
-                Log.e(this.className, "Exception Building Store JSON For GET :: " + e.getMessage());
+                Log.e(this.className, "Exception Building Store JSON For VERIFY :: " + e.getMessage());
             }
 
         }
