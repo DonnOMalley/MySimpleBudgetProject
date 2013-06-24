@@ -159,12 +159,15 @@ public class ServerSynchroniser {
                         syncResult = "Error";
                     }
 
-
-
                     //Synchronise Debits
                     publishProgress(syncResult + '\n' + "Processing Debits...");
                     httpObject = new DebitHTTPObject(this.context, serverAddress, userName, password);
                     dbInterface = new DebitDBInterface(this.context);
+
+                    //Update debit records with their corresponding server ids for Stores/Categories before synchronising
+                    ((DebitDBInterface)httpObject).updateCategoryIDs();
+                    ((DebitDBInterface)httpObject).updateStoreIDs();
+
                     syncResultFlag = synchronizeDataset(httpObject, dbInterface, userName, password);
                     if(syncResultFlag) {
                         syncResult = "Done";

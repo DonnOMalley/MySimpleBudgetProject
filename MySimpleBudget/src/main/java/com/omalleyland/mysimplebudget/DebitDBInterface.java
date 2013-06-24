@@ -13,7 +13,9 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by omal310371 on 6/20/13.
@@ -224,12 +226,8 @@ public class DebitDBInterface implements IObjectDBInterface {
         List<SyncObject> debitList = new ArrayList<SyncObject>();
         List<String> statusListStrings = new ArrayList<String>();
 
-        //TODO : check all debit records with UNKNOWN(-1) Server Category/Store ID's
-        //TODO : and update any where the category/store records have a known(! -1) ServerID.
-
-        //TODO : Needs updated to include records with ONLY Server Category/Store ID's
-        String whereClause = Common.colDEBIT_SYNC_STATUS + " = ?";
-        String[] whereArgs = new String[]{Integer.toString(Common.SYNC_STATUS_NEW)}; //Only new Statuses are supported - Ignore any passed in
+        String whereClause = Common.colDEBIT_SYNC_STATUS + " = ? and " + Common.colDEBIT_SERVER_STORE_ID + " > ? and " + Common.colDEBIT_SERVER_CATEGORY_ID + " > ?";
+        String[] whereArgs = new String[]{Integer.toString(Common.SYNC_STATUS_NEW), Integer.toString(-1), Integer.toString(-1)}; //Only new Statuses are supported - Ignore any passed in
 
         Debit debit;
         Log.v(className, "Querying List of Debits from Local Database based on SyncStatuses :: ".concat(statusListStrings.toString()));
@@ -480,4 +478,144 @@ public class DebitDBInterface implements IObjectDBInterface {
 
         return syncObjects;
     }
+
+    private Map<Integer, Integer> getCategoriesToUpdate() {
+        Map<Integer, Integer> idMap = new HashMap<Integer, Integer>();
+        SQLiteDatabase db;
+        int localCategoryID;
+        int serverCategoryID;
+        String whereClause = Common.colDEBIT_SERVER_CATEGORY_ID + " = ?";
+        String[] whereArgs = new String[]{Integer.toString(-1)};
+
+        Log.v(className, "Querying List of Categories from Debits");
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            String sql = "";
+            sql = "SELECT " + Common.colDEBIT_LOCAL_CATEGORY_ID + ", " + Common.colCATEGORY_SERVER_ID + " FROM " + Common.tblDebits +
+                    " WHERE " + Common.colDEBIT_SERVER_CATEGORY_ID + "<0 AND " + Common.colDEBIT_LOCAL_CATEGORY_ID + " IN (" +
+                    "SELECT " + Common.colCATEGORY_ID + " FROM " + Common.tblCATEGORIES + " WHERE " + Common.colCATEGORY_SERVER_ID + " >=0)";
+            Log.d(className, "Executing SQL :: " + sql);
+            Cursor cursor = db.rawQuery(sql, null);
+
+            //Cursor cursor = db.query(true, Common.tblDebits, new String[]{Common.colDEBIT_LOCAL_CATEGORY_ID} ,whereClause, whereArgs, null, null, null, null);
+            Log.d(className, "Number of Unique Category IDs in Debit Records = " + Integer.toString(cursor.getCount()));
+            if(cursor.moveToFirst()) {
+                do {
+                    localCategoryID = cursor.getInt(0);
+                    serverCategoryID = cursor.getInt(1);
+                    Log.d(className, "Debit Category id Returned :: = " + Integer.toString(localCategoryID));
+                    idMap.put(localCategoryID, serverCategoryID);
+                } while (cursor.moveToNext());
+            }
+            Log.d(className, "Debit Store List Populated :: Size = " + Integer.toString(idMap.size()));
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Querying Debit Category List :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return idMap;
+    }
+
+    private Map<Integer, Integer> getStoresToUpdate() {
+        Map<Integer, Integer> idMap = new HashMap<Integer, Integer>();
+        SQLiteDatabase db;
+        int localStoreID;
+        int serverStoreID;
+        String whereClause = Common.colDEBIT_SERVER_STORE_ID + " = ?";
+        String[] whereArgs = new String[]{Integer.toString(-1)};
+
+        Log.v(className, "Querying List of Stores from Debits");
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            String sql = "";
+            sql = "SELECT " + Common.colDEBIT_LOCAL_STORE_ID + ", " + Common.colSTORE_SERVER_ID + " FROM " + Common.tblDebits +
+                    " WHERE " + Common.colDEBIT_SERVER_STORE_ID + "<0 AND " + Common.colDEBIT_LOCAL_STORE_ID + " IN (" +
+                    "SELECT " + Common.colSTORE_ID + " FROM " + Common.tblSTORES + " WHERE " + Common.colSTORE_SERVER_ID + " >=0)";
+            Log.d(className, "Executing SQL :: " + sql);
+            Cursor cursor = db.rawQuery(sql, null);
+
+            Log.d(className, "Number of Unique Store IDs in Debit Records = " + Integer.toString(cursor.getCount()));
+            if(cursor.moveToFirst()) {
+                do {
+                    localStoreID = cursor.getInt(0);
+                    serverStoreID = cursor.getInt(1);
+                    Log.d(className, "Debit Store id Returned :: = " + Integer.toString(localStoreID));
+                    idMap.put(localStoreID, serverStoreID);
+                } while (cursor.moveToNext());
+            }
+            Log.d(className, "Debit Store List Populated :: Size = " + Integer.toString(idMap.size()));
+        }
+        catch (Exception e) {
+            Log.e(className, "Exception Querying Debit Store List :: " + e.getMessage());
+        }
+        dbHelper.close();
+        return idMap;
+    }
+
+    public void updateCategoryIDs() {
+        //Get List of Categories to Update in Debit List
+        SQLiteDatabase db;
+        int updatedRecords = 0;
+        String whereClause = Common.colDEBIT_LOCAL_CATEGORY_ID + " = ? AND " + Common.colDEBIT_SERVER_CATEGORY_ID + " < 0";
+        String[] whereArgs;
+        ContentValues values = new ContentValues();
+        Map<Integer, Integer> categoryMap;
+        int serverCategoryID;
+
+        categoryMap = getCategoriesToUpdate();
+        if(categoryMap.size() > 0) {
+            db = dbHelper.getWritableDatabase();
+            //For each record in the List<Debit>, update SQLite
+
+            Log.v(className, "Updating Debits with Server Categories from List");
+            try {
+                for(Integer localCategoryID: categoryMap.keySet()) {
+                    serverCategoryID = categoryMap.get(localCategoryID);
+                    values.clear();
+                    values.put(Common.colDEBIT_SERVER_CATEGORY_ID, serverCategoryID);
+                    updatedRecords += db.update(Common.tblDebits, values, whereClause, new String[]{Integer.toString(localCategoryID)});
+                }
+                Log.d(className, "Number of Debit Records Updated = " + Integer.toString(updatedRecords));
+            }
+            catch (Exception e) {
+                Log.e(className, "Exception Updating Category IDs for Debits :: " + e.getMessage());
+            }
+            db.close();
+        }
+    }
+
+    public void updateStoreIDs() {
+        //Get List of Stores to Update in Debit List
+        SQLiteDatabase db;
+        int updatedRecords = 0;
+        String whereClause = Common.colDEBIT_LOCAL_STORE_ID + " = ? AND " + Common.colDEBIT_SERVER_STORE_ID + " < 0";
+        String[] whereArgs;
+        ContentValues values = new ContentValues();
+        Map<Integer, Integer> storeMap;
+        int serverStoreID;
+
+        storeMap = getStoresToUpdate();
+        if(storeMap.size() > 0) {
+            db = dbHelper.getWritableDatabase();
+            //For each record in the List<Debit>, update SQLite
+
+            Log.v(className, "Updating Debits with Server Stores from List");
+            try {
+                for(Integer localStoreID: storeMap.keySet()) {
+                    serverStoreID = storeMap.get(localStoreID);
+                    values.clear();
+                    values.put(Common.colDEBIT_SERVER_STORE_ID, serverStoreID);
+                    updatedRecords += db.update(Common.tblDebits, values, whereClause, new String[]{Integer.toString(localStoreID)});
+                }
+                Log.d(className, "Number of Debit Records Updated = " + Integer.toString(updatedRecords));
+            }
+            catch (Exception e) {
+                Log.e(className, "Exception Updating Store IDs for Debits :: " + e.getMessage());
+            }
+            db.close();
+        }
+    }
+
 }
