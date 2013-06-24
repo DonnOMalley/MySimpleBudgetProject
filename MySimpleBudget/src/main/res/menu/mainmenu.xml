@@ -21,4 +21,8 @@
           android:title="@string/action_create_category"
           android:visible="true"
           android:showAsAction="never" />
+    <item android:id="@+id/action_full_sync"
+          android:title="@string/action_manual_sync_all_configuration"
+          android:visible="true"
+          android:showAsAction="never" />
 </menu>

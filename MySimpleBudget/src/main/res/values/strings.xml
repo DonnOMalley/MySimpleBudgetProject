@@ -39,9 +39,11 @@
         <string name="action_upload_debits">Upload Debits</string>
         <string name="action_create_category">Create Category</string>
         <string name="action_create_store">Create Store</string>
+        <string name="action_manual_sync_all_configuration">Full Sync</string>
     <!-- End of Main Menu Action Strings -->
 
     <!-- UI Helper Strings -->
-        <item name="category_spinner_prompt" type="id">Select a Category</item>
+    <item name="category_spinner_prompt" type="id">Select a Category</item>
+    <item name="store_spinner_prompt" type="id">Select a Store</item>
     <!-- End of UI Helper Strings -->
 </resources>
