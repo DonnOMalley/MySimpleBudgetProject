@@ -101,15 +101,15 @@ public class Debit extends SyncObject {
     @Override
     protected void JSONToObject(JSONObject jsonObject) {
         try {
-            this.id                 = jsonObject.getInt("id");
-            this.localCategoryID    = jsonObject.getInt("local_category_id");
-            this.categoryID         = jsonObject.getInt("category_id");
-            this.localStoreID       = jsonObject.getInt("local_store_id");
-            this.storeID            = jsonObject.getInt("store_id");
-            this.dateString         = jsonObject.getString("debit_date");
-            this.amount             = Double.parseDouble(jsonObject.getString("amount"));
-            this.comment            = jsonObject.getString("comment");
-            this.entryOnString      = jsonObject.getString("entry_on");
+            this.id                 = jsonObject.getInt(Common.colDEBIT_ID);
+            this.localCategoryID    = jsonObject.getInt(Common.colDEBIT_LOCAL_CATEGORY_ID);
+            this.categoryID         = jsonObject.getInt(Common.colDEBIT_SERVER_CATEGORY_ID);
+            this.localStoreID       = jsonObject.getInt(Common.colDEBIT_LOCAL_STORE_ID);
+            this.storeID            = jsonObject.getInt(Common.colDEBIT_SERVER_STORE_ID);
+            this.dateString         = jsonObject.getString(Common.colDEBIT_DEBIT_DATE);
+            this.amount             = Double.parseDouble(jsonObject.getString(Common.colDEBIT_DEBIT_AMOUNT));
+            this.comment            = jsonObject.getString(Common.colDEBIT_COMMENT);
+            this.entryOnString      = jsonObject.getString(Common.colDEBIT_ENTRY_ON);
         }
         catch (Exception e) {
             //Do nothing for now

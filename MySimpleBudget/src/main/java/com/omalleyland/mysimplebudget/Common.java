@@ -186,5 +186,6 @@ public class Common {
     public static final String      CATEGORY_JSON_ARRAY                 = "categoryArray";
     public static final String      STORE_JSON_ARRAY                    = "storeArray";
     public static final String      DEBIT_JSON_ARRAY                    = "debitArray";
+    public static final String      USER_ID_PREFERENCE                  = "userID";
 
 }
