@@ -35,6 +35,7 @@ public class PostDebitClick implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+        boolean canPostToServer = true;
         String date;
         String entryOn;
         Date parsedDate;
@@ -52,56 +53,65 @@ public class PostDebitClick implements View.OnClickListener {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String localTimeZone = simpleDateFormat.getTimeZone().getDisplayName();
         try {
-            parsedDate = new Date();
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-//            Toast.makeText(this.context, "UTC Time = ".concat(date), Toast.LENGTH_LONG).show();
+            if(this.categorySpinner.getSelectedItemPosition() > 0 && this.storeSpinner.getSelectedItemPosition() > 0) {
+                parsedDate = new Date();
+                simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-            simpleDateFormat.setTimeZone(TimeZone.getDefault());
-            entryOn = simpleDateFormat.format(parsedDate);
+                simpleDateFormat.setTimeZone(TimeZone.getDefault());
+                entryOn = simpleDateFormat.format(parsedDate);
 
-            Category category = (Category)this.categorySpinner.getSelectedItem();
-            Store store = (Store)this.storeSpinner.getSelectedItem();
-            Double amount = Double.parseDouble(this.amountEditText.getText().toString());
-            date = simpleDateFormat.format(parsedDate);
-            String comment = this.commentEditText.getText().toString();
+                Category category = (Category)this.categorySpinner.getSelectedItem();
+                Store store = (Store)this.storeSpinner.getSelectedItem();
+                Double amount = Double.parseDouble(this.amountEditText.getText().toString());
+                date = simpleDateFormat.format(parsedDate);
+                String comment = this.commentEditText.getText().toString();
 
-            Debit postDebit = new Debit();
-            postDebit.setAmount(amount);
-            postDebit.setLocalCategoryID(category.getID());
-            if(category.getServerID() != Common.UNKNOWN) {
-                postDebit.setCategoryID(category.getServerID());
+                Debit postDebit = new Debit();
+                postDebit.setAmount(amount);
+                postDebit.setLocalCategoryID(category.getID());
+                if(category.getServerID() != Common.UNKNOWN) {
+                    postDebit.setCategoryID(category.getServerID());
+                }
+                else {
+                    canPostToServer = false;
+                }
+
+                postDebit.setLocalStoreID(store.getID());
+                if(store.getServerID() != Common.UNKNOWN) {
+                    postDebit.setStoreID(store.getServerID());
+                }
+                else {
+                    canPostToServer = false;
+                }
+                date = debitDate.toString();
+                postDebit.setDateString(date);
+                postDebit.setComment(comment);
+                postDebit.setEntryOnString(entryOn);
+
+                //TODO : Create async task
+                //      - Parameters: 'canPostToServer'
+                //                  : postDebit
+
+
+
+
+
+
+
+
+                //TODO : Try to post debit directly and no matter what, post to local sqlite database
+                //          Check for Category/Store server ids, If either are not assigned, post ONLY to local.
+                //          If successfully posted to server, mark as pending verify
+                //          If NOT Successful, mark as new.
+
+
+
+    //            date = simpleDateFormat.format(parsedDate);
+    //            parsedDate = simpleDateFormat.parse(parsedDate.toString());
             }
-
-            postDebit.setLocalStoreID(store.getID());
-            if(store.getServerID() != Common.UNKNOWN) {
-                postDebit.setStoreID(store.getServerID());
-            }
-            date = debitDate.toString();
-            postDebit.setDateString(date);
-            postDebit.setComment(comment);
-            postDebit.setEntryOnString(entryOn);
-
-
-
-
-
-
-
-
-            //TODO : Try to post debit directly and no matter what, post to local sqlite database
-            //          Check for Category/Store server ids, If either are not assigned, post ONLY to local.
-            //          If successfully posted to server, mark as pending verify
-            //          If NOT Successful, mark as new.
-
-
-
-//            date = simpleDateFormat.format(parsedDate);
-//            parsedDate = simpleDateFormat.parse(parsedDate.toString());
         }
         catch (Exception e) {
-            parsedDate = new Date();
+            //TODO : Do something with this exception
         }
-//        Toast.makeText(this.context, "Parsed Date = ".concat(parsedDate.toString()), Toast.LENGTH_LONG).show();
-//        Toast.makeText(this.context, "Formatted Date = ".concat(date), Toast.LENGTH_LONG).show();
     }
 }
