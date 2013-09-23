@@ -67,7 +67,7 @@ public class DebitDBInterface implements IObjectDBInterface {
         if(syncObject != null) {
             debit = (Debit)syncObject;
             Log.d(className, "Adding Debit To Database :: " +
-                    ", purchaser_id = " + Integer.toString(debit.getUserID()) +
+                    "purchaser_id = " + Integer.toString(debit.getUserID()) +
                     ", local_category_id = " + Integer.toString(debit.getLocalCategoryID()) +
                     ", server_category_id = " + Integer.toString(debit.getCategoryID()) +
                     ", local_store_id = " + Integer.toString(debit.getLocalCategoryID()) +
@@ -75,7 +75,8 @@ public class DebitDBInterface implements IObjectDBInterface {
                     ", debit_date = " + debit.getDateString() +
                     ", amount = " + Double.toString(debit.getAmount()) +
                     ", comment = " + debit.getComment() +
-                    ", entry_on = " + debit.getEntryOnString());
+                    ", entry_on = " + debit.getEntryOnString() +
+                    ", Sync Status = " + Integer.toString(debit.getSyncStatus()));
             try {
                 db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -88,6 +89,7 @@ public class DebitDBInterface implements IObjectDBInterface {
                 values.put(Common.colDEBIT_DEBIT_AMOUNT, numberFormat.format(debit.getAmount()));
                 values.put(Common.colDEBIT_COMMENT, debit.getComment());
                 values.put(Common.colDEBIT_ENTRY_ON, debit.getEntryOnString());
+                values.put(Common.colDEBIT_SYNC_STATUS, debit.getSyncStatus());
                 Log.v(className, "Inserting into Debits Table");
                 insertId = db.insert(Common.tblDebits, null, values);
             }
@@ -230,7 +232,7 @@ public class DebitDBInterface implements IObjectDBInterface {
         String[] whereArgs = new String[]{Integer.toString(Common.SYNC_STATUS_NEW), Integer.toString(-1), Integer.toString(-1)}; //Only new Statuses are supported - Ignore any passed in
 
         Debit debit;
-        Log.v(className, "Querying List of Debits from Local Database based on SyncStatuses :: ".concat(statusListStrings.toString()));
+        Log.v(className, "Querying List of Debits from Local Database based on SyncStatuses :: ".concat(Integer.toString(Common.SYNC_STATUS_NEW)));
         try {
             db = dbHelper.getWritableDatabase();
 
@@ -284,6 +286,7 @@ public class DebitDBInterface implements IObjectDBInterface {
                 //  if exists, update
                 //  else add
                 existingDebit = (Debit)getObject(syncObject.getID());
+                Log.d(className, "SyncObject ID = " + Integer.toString(syncObject.getID()));
                 if(existingDebit!=null) {
                     db = dbHelper.getWritableDatabase();
                     values.clear();
@@ -346,30 +349,13 @@ public class DebitDBInterface implements IObjectDBInterface {
                 //Check for debit to exist,
                 //  if exists, update
                 //  else add
-                existingDebit = (Debit)getObject(syncObject.getName());
+                existingDebit = (Debit)getObject(syncObject.getID());
                 if(existingDebit!=null) {
                     db = dbHelper.getWritableDatabase();
                     values.clear();
-                    values.put(Common.colDEBIT_PURCHASER_ID, existingDebit.getUserID());
-                    values.put(Common.colDEBIT_LOCAL_CATEGORY_ID, existingDebit.getLocalCategoryID());
-                    values.put(Common.colDEBIT_SERVER_CATEGORY_ID, existingDebit.getCategoryID());
-                    values.put(Common.colDEBIT_LOCAL_STORE_ID, existingDebit.getLocalStoreID());
-                    values.put(Common.colDEBIT_SERVER_STORE_ID, existingDebit.getStoreID());
-                    values.put(Common.colDEBIT_DEBIT_DATE, existingDebit.getDateString());
-                    values.put(Common.colDEBIT_DEBIT_AMOUNT, numberFormat.format(existingDebit.getAmount()));
-                    values.put(Common.colDEBIT_COMMENT, existingDebit.getComment());
-                    values.put(Common.colDEBIT_ENTRY_ON, existingDebit.getEntryOnString());
+                    values.put(Common.colDEBIT_SYNC_STATUS, syncStatus);
                     whereArgs = new String[]{Integer.toString(syncObject.getID())};
-                    Log.d(className, "Updating Debit Record :: id = " + Integer.toString(existingDebit.getID()) +
-                            ", purchaser_id = " + Integer.toString(existingDebit.getUserID()) +
-                            ", local_category_id = " + Integer.toString(existingDebit.getLocalCategoryID()) +
-                            ", server_category_id = " + Integer.toString(existingDebit.getCategoryID()) +
-                            ", local_store_id = " + Integer.toString(existingDebit.getLocalCategoryID()) +
-                            ", server_store_id = " + Integer.toString(existingDebit.getStoreID()) +
-                            ", debit_date = " + existingDebit.getDateString() +
-                            ", amount = " + Double.toString(existingDebit.getAmount()) +
-                            ", comment = " + existingDebit.getComment() +
-                            ", entry_on = " + existingDebit.getEntryOnString());
+                    Log.d(className, "Updating Debit Record :: id = " + Integer.toString(existingDebit.getID()));
                     updatedRecords = updatedRecords + db.update(Common.tblDebits, values, whereClause, whereArgs);
                     dbHelper.close();
                 }
@@ -433,17 +419,17 @@ public class DebitDBInterface implements IObjectDBInterface {
         }
         else if(httpType == Common.HTTP_TYPE_VERIFY) {
             try {
-                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
-                jsonObjectResult = new JSONObject();
-                jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
-                jsonObjectResult.put("user", userName);
-                if(syncObjects.size() > 0) {
-                    for(SyncObject syncObject: syncObjects) {
-                        debitJSON = new JSONObject(((Debit)syncObject).getMap());
-                        jsonDebitArray.put(debitJSON);
-                    }
-                    jsonObjectResult.put(Common.DEBIT_JSON_ARRAY, jsonDebitArray);
-                }
+//                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
+//                jsonObjectResult = new JSONObject();
+//                jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
+//                jsonObjectResult.put("user", userName);
+//                if(syncObjects.size() > 0) {
+//                    for(SyncObject syncObject: syncObjects) {
+//                        debitJSON = new JSONObject(((Debit)syncObject).getMap());
+//                        jsonDebitArray.put(debitJSON);
+//                    }
+//                    jsonObjectResult.put(Common.DEBIT_JSON_ARRAY, jsonDebitArray);
+//                }
                 Log.d(this.className, jsonObjectResult.toString());
             }
             catch (Exception e) {
@@ -467,6 +453,7 @@ public class DebitDBInterface implements IObjectDBInterface {
             for (int i = 0; i < jsonArray.length(); i++) {
                 debitJSONObject = jsonArray.getJSONObject(i);
                 debit = new Debit();
+                Log.d(className, "Writing JSON To Object");
                 debit.JSONToObject(debitJSONObject);
                 syncObjects.add(debit);
             }
@@ -492,7 +479,7 @@ public class DebitDBInterface implements IObjectDBInterface {
             db = dbHelper.getWritableDatabase();
 
             String sql = "";
-            sql = "SELECT " + Common.colDEBIT_LOCAL_CATEGORY_ID + ", " + Common.colCATEGORY_SERVER_ID + " FROM " + Common.tblDebits +
+            sql = "SELECT " + Common.colDEBIT_LOCAL_CATEGORY_ID + ", " + Common.colDEBIT_SERVER_CATEGORY_ID + " FROM " + Common.tblDebits +
                     " WHERE " + Common.colDEBIT_SERVER_CATEGORY_ID + "<0 AND " + Common.colDEBIT_LOCAL_CATEGORY_ID + " IN (" +
                     "SELECT " + Common.colCATEGORY_ID + " FROM " + Common.tblCATEGORIES + " WHERE " + Common.colCATEGORY_SERVER_ID + " >=0)";
             Log.d(className, "Executing SQL :: " + sql);
@@ -530,7 +517,7 @@ public class DebitDBInterface implements IObjectDBInterface {
             db = dbHelper.getWritableDatabase();
 
             String sql = "";
-            sql = "SELECT " + Common.colDEBIT_LOCAL_STORE_ID + ", " + Common.colSTORE_SERVER_ID + " FROM " + Common.tblDebits +
+            sql = "SELECT " + Common.colDEBIT_LOCAL_STORE_ID + ", " + Common.colDEBIT_SERVER_STORE_ID + " FROM " + Common.tblDebits +
                     " WHERE " + Common.colDEBIT_SERVER_STORE_ID + "<0 AND " + Common.colDEBIT_LOCAL_STORE_ID + " IN (" +
                     "SELECT " + Common.colSTORE_ID + " FROM " + Common.tblSTORES + " WHERE " + Common.colSTORE_SERVER_ID + " >=0)";
             Log.d(className, "Executing SQL :: " + sql);

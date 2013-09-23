@@ -14,7 +14,7 @@ public class Common {
     public static final int         UNKNOWN                             = -1;
 
     /* SQLite DB Constants */
-    public static final int         DATABASE_VERSION                    = 4;
+    public static final int         DATABASE_VERSION                    = 7;
     public static final String      DATABASE_NAME                       = APPLICATION_NAME + "DB";
 
     /* Database Table Status Constants */
@@ -77,6 +77,7 @@ public class Common {
 
     /* SQLite Debits Table Constants */
     public static final String      tblDebits                           = "Debits";
+    public static final String      colDEBIT_CLIENT_ID                  = "client_id"; //For parsing JSON to debit Object from server.
     public static final String      colDEBIT_ID                         = "id";
     public static final int         colDEBIT_ID_INDEX                   = 0;
     public static final String      colDEBIT_PURCHASER_ID               = "purchaserID";

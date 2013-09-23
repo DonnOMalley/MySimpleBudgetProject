@@ -39,6 +39,7 @@ public class ServerSynchroniser {
     private ProgressDialog          progressDialog      = null;
     private SynchroniseProcess      synchroniseProcess  = null;
     private String                  className           = "ServerSynchroniser";
+    private boolean                 postOnlyDebits      = false;
 
     public ServerSynchroniser() {
         Log.v(className, "Empty Constructor");
@@ -62,6 +63,10 @@ public class ServerSynchroniser {
 
     public void setBackgroundProcessor(IBackgroundProcessor bgProcessor) {
         this.bgProcessor = bgProcessor;
+    }
+
+    public void setPostOnlyDebits(boolean postOnlyDebits) {
+        this.postOnlyDebits = postOnlyDebits;
     }
 
     /* Calls Async Task for performing synchronisation with the server */
@@ -133,40 +138,44 @@ public class ServerSynchroniser {
             if((serverAddress.length() > 0) && (userName.length() > 0) && (password.length() > 0)) {
 
                 try {
-                    //Synchronise Categories
-                    publishProgress("Processing Categories...");
-                    httpObject = new CategoryHTTPObject(this.context, serverAddress, userName, password);
-                    dbInterface = new CategoryDBInterface(this.context);
-                    syncResultFlag = synchronizeDataset(httpObject, dbInterface, userName, password);
-                    updateUIList.set(Common.CATEGORY_UI_CONTROL_INDEX, syncResultFlag);
-                    if(syncResultFlag) {
-                        syncResult = "Done";
-                    }
-                    else {
-                        syncResult = "Error";
-                    }
+                    if(!postOnlyDebits) {
+                        //Synchronise Categories
+                        publishProgress("Processing Categories...");
+                        httpObject = new CategoryHTTPObject(this.context, serverAddress, userName, password);
+                        dbInterface = new CategoryDBInterface(this.context);
+                        syncResultFlag = synchronizeDataset(httpObject, dbInterface, userName, password);
+                        updateUIList.set(Common.CATEGORY_UI_CONTROL_INDEX, syncResultFlag);
+                        if(syncResultFlag) {
+                            syncResult = "Done";
+                        }
+                        else {
+                            syncResult = "Error";
+                        }
+                        publishProgress(syncResult + '\n');
 
-                    //Synchronise Stores
-                    publishProgress(syncResult + '\n' + "Processing Stores...");
-                    httpObject = new StoreHTTPObject(this.context, serverAddress, userName, password);
-                    dbInterface = new StoreDBInterface(this.context);
-                    syncResultFlag = synchronizeDataset(httpObject, dbInterface, userName, password);
-                    updateUIList.set(Common.STORE_UI_CONTROL_INDEX, syncResultFlag);
-                    if(syncResultFlag) {
-                        syncResult = "Done";
-                    }
-                    else {
-                        syncResult = "Error";
+                        //Synchronise Stores
+                        publishProgress("Processing Stores...");
+                        httpObject = new StoreHTTPObject(this.context, serverAddress, userName, password);
+                        dbInterface = new StoreDBInterface(this.context);
+                        syncResultFlag = synchronizeDataset(httpObject, dbInterface, userName, password);
+                        updateUIList.set(Common.STORE_UI_CONTROL_INDEX, syncResultFlag);
+                        if(syncResultFlag) {
+                            syncResult = "Done";
+                        }
+                        else {
+                            syncResult = "Error";
+                        }
+                        publishProgress(syncResult + '\n');
                     }
 
                     //Synchronise Debits
-                    publishProgress(syncResult + '\n' + "Processing Debits...");
+                    publishProgress("Processing Debits...");
                     httpObject = new DebitHTTPObject(this.context, serverAddress, userName, password);
                     dbInterface = new DebitDBInterface(this.context);
 
                     //Update debit records with their corresponding server ids for Stores/Categories before synchronising
-                    ((DebitDBInterface)httpObject).updateCategoryIDs();
-                    ((DebitDBInterface)httpObject).updateStoreIDs();
+                    ((DebitDBInterface)dbInterface).updateCategoryIDs();
+                    ((DebitDBInterface)dbInterface).updateStoreIDs();
 
                     syncResultFlag = synchronizeDataset(httpObject, dbInterface, userName, password);
                     if(syncResultFlag) {
@@ -190,36 +199,44 @@ public class ServerSynchroniser {
         protected void onPreExecute() {
             Log.d(className, "PreExecute");
 
-            dialogMessageText = "";
-            progressDialog = ProgressDialog.show(context, "Synchronising Configuration", dialogMessageText, true, true, new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialogInterface) {
-                    cancelBackgroundProcess();
-                }
-            });
+            if(!postOnlyDebits) {
+                dialogMessageText = "";
+                progressDialog = ProgressDialog.show(context, "Synchronising Configuration", dialogMessageText, true, true, new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        cancelBackgroundProcess();
+                    }
+                });
+            }
         }
 
         @Override
         protected void onPostExecute(ArrayList<Boolean> result) {
             Log.d(className, "PostExecute");
-            progressDialog.dismiss();
-            bgProcessor.updateUIControls(result);
+            if(!postOnlyDebits) {
+                progressDialog.dismiss();
+                bgProcessor.updateUIControls(result);
+            }
         }
 
         @Override
         protected void onProgressUpdate(String... message) {
-            dialogMessageText = dialogMessageText.concat(message[0]);
-            progressDialog.setMessage(dialogMessageText);
+            if(!postOnlyDebits) {
+                dialogMessageText = dialogMessageText.concat(message[0]);
+                progressDialog.setMessage(dialogMessageText);
+            }
         }
 
         @Override
         protected void onCancelled() {
             Log.d(className, "Synchronisation Canceled");
-            progressDialog.dismiss();
-            ArrayList<Boolean> updateUIList = new ArrayList<Boolean>();
-            updateUIList.add(false); //Update Categories
-            updateUIList.add(false); //Update Stores
-            bgProcessor.updateUIControls(updateUIList);
+            if(!postOnlyDebits) {
+                progressDialog.dismiss();
+                ArrayList<Boolean> updateUIList = new ArrayList<Boolean>();
+                updateUIList.add(false); //Update Categories
+                updateUIList.add(false); //Update Stores
+                bgProcessor.updateUIControls(updateUIList);
+            }
         }
 
         private boolean postDataToServer(IHttpObject httpObject, IObjectDBInterface objectDBInterface, String userName, String password) {
@@ -257,6 +274,7 @@ public class ServerSynchroniser {
             }
             else {
                 Log.d(this.className, "Null JSON - Nothing to Post.");
+                result = true; //Nothing to post is not an error condition so set result to 'true'
             }
             return result;
         }
@@ -333,6 +351,9 @@ public class ServerSynchroniser {
                     }
                 }
             }
+            else {
+                Log.d(this.className, "Error Building Get JSON");
+            }
             return  result;
         }
 
@@ -343,12 +364,14 @@ public class ServerSynchroniser {
             Log.d(this.className, "Posting Data To Server");
             result = postDataToServer(httpObject, objectDBInterface, userName, password);
 
-            Log.d(this.className, "Verifying Server Data");
-            result = verifyLocalDataWithServer(httpObject, objectDBInterface, userName, password);
+            if(!objectDBInterface.getClass().toString().equals(DebitDBInterface.class.toString())) {
+                Log.d(this.className, "Verifying Server Data");
+                result = verifyLocalDataWithServer(httpObject, objectDBInterface, userName, password);
 
-            Log.d(this.className, "Getting Data From Server");
-            //Execute Get from Server
-            result = getDataFromServer(httpObject, objectDBInterface, userName, password);
+                Log.d(this.className, "Getting Data From Server");
+                //Execute Get from Server
+                result = getDataFromServer(httpObject, objectDBInterface, userName, password);
+            }
 
             //Only write sync timestamp if data fetched from server succeeded.
             if(result) {

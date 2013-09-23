@@ -46,6 +46,9 @@ public class SyncObject {
             case Common.SYNC_OBJECT_TYPE_STORE:
                 Log.d(className, "Store SyncObject Created");
                 break;
+            case Common.SYNC_OBJECT_TYPE_DEBIT:
+                Log.d(className, "Debit SyncObject Created");
+                break;
             default:
                 Log.e(className, "Invalid SyncObject Type Created");
         }

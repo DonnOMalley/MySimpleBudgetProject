@@ -207,6 +207,11 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
                 Toast.makeText(this, "Login Information Must Be Entered", Toast.LENGTH_LONG).show();
                 startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
             }
+            else if(resultCode == Common.LOGIN_FAILED) {
+                Log.d(className, "Login Failed for " + userName);
+                Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
+                startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
+            }
 
         }
         else if(requestCode == Common.PREFERENCE_RESULT_CODE) {

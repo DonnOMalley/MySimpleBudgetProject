@@ -1,7 +1,10 @@
 package com.omalleyland.mysimplebudget;
 
+import android.util.Log;
+
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -101,31 +104,37 @@ public class Debit extends SyncObject {
     @Override
     protected void JSONToObject(JSONObject jsonObject) {
         try {
-            this.id                 = jsonObject.getInt(Common.colDEBIT_ID);
-            this.localCategoryID    = jsonObject.getInt(Common.colDEBIT_LOCAL_CATEGORY_ID);
-            this.categoryID         = jsonObject.getInt(Common.colDEBIT_SERVER_CATEGORY_ID);
-            this.localStoreID       = jsonObject.getInt(Common.colDEBIT_LOCAL_STORE_ID);
-            this.storeID            = jsonObject.getInt(Common.colDEBIT_SERVER_STORE_ID);
-            this.dateString         = jsonObject.getString(Common.colDEBIT_DEBIT_DATE);
-            this.amount             = Double.parseDouble(jsonObject.getString(Common.colDEBIT_DEBIT_AMOUNT));
+            Log.d(className, "Parsing ID");
+            this.id                 = jsonObject.getInt(Common.colDEBIT_CLIENT_ID);
+            Log.d(className, "Parsing category");
+            this.categoryID         = jsonObject.getInt("category_id");
+            Log.d(className, "Parsing Store");
+            this.storeID            = jsonObject.getInt("store_id");
+            Log.d(className, "Parsing date");
+            this.dateString         = jsonObject.getString("debit_date");
+            Log.d(className, "Parsing Amount");
+            this.amount             = Double.parseDouble(jsonObject.getString("amount"));
+            Log.d(className, "Parsing Comment");
             this.comment            = jsonObject.getString(Common.colDEBIT_COMMENT);
-            this.entryOnString      = jsonObject.getString(Common.colDEBIT_ENTRY_ON);
+            Log.d(className, "Parsing Entry On");
+            this.entryOnString      = jsonObject.getString("entry_on");
         }
         catch (Exception e) {
             //Do nothing for now
+            Log.e(className, "Error Parsing JSON to a Debit Object");
         }
     }
 
     public Map<String, String> getMap() {
         Map<String, String> debitMap = new HashMap<String, String>();
+        debitMap.put(Common.colDEBIT_CLIENT_ID, Integer.toString(this.id));
         debitMap.put(Common.colDEBIT_PURCHASER_ID, Integer.toString(this.userID));
-        debitMap.put(Common.colDEBIT_ID, Integer.toString(this.id));
         debitMap.put(Common.colDEBIT_LOCAL_CATEGORY_ID, Integer.toString(this.localCategoryID));
         debitMap.put(Common.colDEBIT_SERVER_CATEGORY_ID, Integer.toString(this.categoryID));
         debitMap.put(Common.colDEBIT_SERVER_STORE_ID, Integer.toString(this.storeID));
         debitMap.put(Common.colDEBIT_LOCAL_STORE_ID, Integer.toString(this.localStoreID));
         debitMap.put(Common.colDEBIT_DEBIT_DATE, this.dateString);
-        debitMap.put(Common.colDEBIT_DEBIT_AMOUNT, Double.toString(this.amount));
+        debitMap.put(Common.colDEBIT_DEBIT_AMOUNT, Double.toString(Double.parseDouble(new DecimalFormat("#.##").format(this.amount))));
         debitMap.put(Common.colDEBIT_COMMENT, this.comment);
         debitMap.put(Common.colDEBIT_ENTRY_ON, this.entryOnString);
 

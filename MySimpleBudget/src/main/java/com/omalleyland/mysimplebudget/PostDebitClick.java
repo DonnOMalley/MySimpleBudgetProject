@@ -8,6 +8,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -35,6 +36,7 @@ public class PostDebitClick implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+        DebitDBInterface dbInterface = new DebitDBInterface(this.context);
         boolean canPostToServer = true;
         String date;
         String entryOn;
@@ -83,31 +85,47 @@ public class PostDebitClick implements View.OnClickListener {
                 else {
                     canPostToServer = false;
                 }
-                date = debitDate.toString();
+
+                date = Integer.toString(debitDate.getYear());
+                if(debitDate.getMonth() < 9) {
+                    date += "-0" + Integer.toString(debitDate.getMonth() + 1);
+                }
+                else {
+                    date += "-" + Integer.toString(debitDate.getMonth() + 1);
+                }
+                if(debitDate.getDayOfMonth() < 10) {
+                    date += "-0" + Integer.toString(debitDate.getDayOfMonth());
+                }
+                else {
+                    date += "-" + Integer.toString(debitDate.getDayOfMonth());
+                }
                 postDebit.setDateString(date);
                 postDebit.setComment(comment);
                 postDebit.setEntryOnString(entryOn);
+                postDebit.setSyncStatus(Common.SYNC_STATUS_NEW);
 
-                //TODO : Create async task
-                //      - Parameters: 'canPostToServer'
-                //                  : postDebit
+                //Add debit to local SQLite Database
+                if(dbInterface.addObject(postDebit) < 0) {
+                    canPostToServer = false;
+                    Toast.makeText(this.context, "Unable to Create Debit", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    //Clear out debit information since it was added to the local SQLite DB
+                    this.categorySpinner.setSelection(0);
+                    this.storeSpinner.setSelection(0);
+                    this.amountEditText.setText("");
+                    this.commentEditText.setText("");
+                }
 
-
-
-
-
-
-
-
-                //TODO : Try to post debit directly and no matter what, post to local sqlite database
-                //          Check for Category/Store server ids, If either are not assigned, post ONLY to local.
-                //          If successfully posted to server, mark as pending verify
-                //          If NOT Successful, mark as new.
-
-
-
-    //            date = simpleDateFormat.format(parsedDate);
-    //            parsedDate = simpleDateFormat.parse(parsedDate.toString());
+                //If Server IDs(Store/Category) exist, attempt to post to server.
+                if(canPostToServer) {
+                    //Synchronise any debits
+                    ServerSynchroniser serverSynchroniser;
+                    serverSynchroniser = new ServerSynchroniser();
+                    serverSynchroniser.setContext(this.context);
+                    serverSynchroniser.setPostOnlyDebits(true);
+                    serverSynchroniser.synchroniseData();
+                }
             }
         }
         catch (Exception e) {
