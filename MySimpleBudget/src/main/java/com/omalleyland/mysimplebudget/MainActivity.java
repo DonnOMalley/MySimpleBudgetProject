@@ -161,8 +161,18 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
                 startActivityForResult(new Intent(MainActivity.this, CreateStore.class), Common.CREATE_STORE_RESULT_CODE);
                 return true;
             case R.id.action_upload_debits:
-                //TODO : Upload Debits to Server
-                return true;
+              //TODO : Upload Debits to Server
+
+              Toast.makeText(this, "Posting Debits to Server", Toast.LENGTH_LONG).show();
+
+              //Synchronise any debits
+              ServerSynchroniser serverSynchroniser = new ServerSynchroniser();
+              serverSynchroniser.setContext(this);
+              serverSynchroniser.setPostOnlyDebits(true);
+              serverSynchroniser.synchroniseData();
+
+              //Posting Complete Message will be shown when posting completes
+              return true;
             case R.id.action_login_preferences:
                 startActivity(new Intent(MainActivity.this, Preferences.class));
                 return true;
@@ -186,31 +196,35 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             Log.v(className, "Login Activity Result :: " + Integer.toString(resultCode));
 
             if(resultCode == Common.LOGIN_SUCCESSFUL) {
-                Log.d(className, "Login Successful");
-                if(data.hasExtra(Common.LOGIN_RESULT_USER_EXTRA)) {
-                    userName = data.getStringExtra(Common.LOGIN_RESULT_USER_EXTRA);
-                }
-                if(data.hasExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA)) {
-                    passwordHash = data.getStringExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA);
-                }
-                Log.d(className, "User(" + userName + ") Token = " + passwordHash);
+              Log.d(className, "Login Successful");
+              if(data.hasExtra(Common.LOGIN_RESULT_USER_EXTRA)) {
+                userName = data.getStringExtra(Common.LOGIN_RESULT_USER_EXTRA);
+              }
+              if(data.hasExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA)) {
+                passwordHash = data.getStringExtra(Common.LOGIN_RESULT_PASSWORD_EXTRA);
+              }
+              Log.d(className, "User(" + userName + ") Token = " + passwordHash);
 
-                synchroniseConfiguration();
+              synchroniseConfiguration();
             }
             else if(resultCode == Common.LOGIN_CONNECTION_ERROR) {
-                Log.d(className, "Login Connection Failed - Working Offline");
-                setTitle(Common.APPLICATION_NAME + " - OFFLINE");
+              Log.d(className, "Login Connection Failed - Working Offline");
+              setTitle(Common.APPLICATION_NAME + " - OFFLINE");
+              ArrayList<Boolean> updateUIList = new ArrayList<Boolean>();
+              updateUIList.add(true); //Update Categories
+              updateUIList.add(true); //Update Stores
+              updateUIControls(updateUIList);
             }
             else if(resultCode == Common.LOGIN_CANCELED) {
-                //User Pressed Back button to exit login application - Only occurs if Login Information is not saved.
-                Log.d(className, "Login Canceled - Launching Login Activity Again");
-                Toast.makeText(this, "Login Information Must Be Entered", Toast.LENGTH_LONG).show();
-                startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
+              //User Pressed Back button to exit login application - Only occurs if Login Information is not saved.
+              Log.d(className, "Login Canceled - Launching Login Activity Again");
+              Toast.makeText(this, "Login Information Must Be Entered", Toast.LENGTH_LONG).show();
+              startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
             }
             else if(resultCode == Common.LOGIN_FAILED) {
-                Log.d(className, "Login Failed for " + userName);
-                Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
-                startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
+              Log.d(className, "Login Failed for " + userName);
+              Toast.makeText(this, "Login Failed", Toast.LENGTH_LONG).show();
+              startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
             }
 
         }

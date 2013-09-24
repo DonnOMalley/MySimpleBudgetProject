@@ -2,9 +2,9 @@
     <item android:id="@+id/action_login_preferences"
           android:title="@string/action_preferences"
           android:showAsAction="never" />
-    <item android:id="@+id/action_logout"
+    <!--<item android:id="@+id/action_logout"
           android:title="@string/action_logout"
-          android:showAsAction="never" />
+          android:showAsAction="never" /> -->
     <item android:id="@+id/action_login"
           android:title="@string/action_sign_in_short"
           android:visible="false"

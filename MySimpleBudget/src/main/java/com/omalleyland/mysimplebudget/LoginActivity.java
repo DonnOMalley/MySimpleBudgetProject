@@ -84,7 +84,7 @@ public class LoginActivity extends Activity implements IBackgroundProcessor {
 
         //Hide Menu Items that are not usable from Login Activity
         //Leaves the 'Preferences' Menu Item ONLY
-        menu.findItem(R.id.action_logout).setVisible(false);
+//        menu.findItem(R.id.action_logout).setVisible(false);
         menu.findItem(R.id.action_login).setVisible(false);
         menu.findItem(R.id.action_create_category).setVisible(false);
         menu.findItem(R.id.action_create_store).setVisible(false);

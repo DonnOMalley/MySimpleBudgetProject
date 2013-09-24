@@ -176,7 +176,6 @@ public class StoreDBInterface implements IObjectDBInterface {
         String whereClause = Common.colSTORE_ACTIVE_STATUS + " = ?";
         Log.v(className, "Querying List of Active Stores");
 
-
         try {
             db = dbHelper.getWritableDatabase();
             Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, whereClause, whereArgs, null, null, Common.colSTORE_NAME);
