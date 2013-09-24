@@ -33,6 +33,19 @@ public class PostDebitClick implements View.OnClickListener {
         this.commentEditText = comment;
     }
 
+    private boolean validateDebitRequirements() {
+        boolean result = false;
+
+        //Only return true(valid) if all category, payee and Amount have been entered
+        if((this.categorySpinner.getSelectedItemPosition() > 0) &&
+                (this.storeSpinner.getSelectedItemPosition() >0) &&
+                (Double.parseDouble(this.amountEditText.getText().toString()) > 0)) {
+            result = true;
+        }
+
+        return result;
+    }
+
     @Override
     public void onClick(View view) {
 
@@ -40,35 +53,39 @@ public class PostDebitClick implements View.OnClickListener {
         boolean canPostToServer = true;
         String date;
         String entryOn;
+        SimpleDateFormat simpleDateFormat;
         Date parsedDate;
-        String month = Integer.toString(this.debitDate.getMonth() + 1);
-        String day = Integer.toString(this.debitDate.getDayOfMonth());
-        if(month.length() < 2) {
-            month = "0".concat(month);
-        }
-        if(day.length() < 2) {
-            day = "0".concat(day);
-        }
-
-        date = Integer.toString(this.debitDate.getYear()).concat("-".concat(month)).concat("-".concat(day));
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String localTimeZone = simpleDateFormat.getTimeZone().getDisplayName();
+        Double amount;
+        String comment;
+        Category category;
+        Store store;
+        Debit postDebit;
         try {
-            if(this.categorySpinner.getSelectedItemPosition() > 0 && this.storeSpinner.getSelectedItemPosition() > 0) {
+            if(validateDebitRequirements()) {
                 parsedDate = new Date();
+                simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-                simpleDateFormat.setTimeZone(TimeZone.getDefault());
                 entryOn = simpleDateFormat.format(parsedDate);
 
-                Category category = (Category)this.categorySpinner.getSelectedItem();
-                Store store = (Store)this.storeSpinner.getSelectedItem();
-                Double amount = Double.parseDouble(this.amountEditText.getText().toString());
-                date = simpleDateFormat.format(parsedDate);
-                String comment = this.commentEditText.getText().toString();
+                category = (Category)this.categorySpinner.getSelectedItem();
+                store = (Store)this.storeSpinner.getSelectedItem();
+                amount = Double.parseDouble(this.amountEditText.getText().toString());
+                comment = this.commentEditText.getText().toString();
+                date = Integer.toString(debitDate.getYear());
+                if(debitDate.getMonth() < 9) {
+                    date += "-0" + Integer.toString(debitDate.getMonth() + 1);
+                }
+                else {
+                    date += "-" + Integer.toString(debitDate.getMonth() + 1);
+                }
+                if(debitDate.getDayOfMonth() < 10) {
+                    date += "-0" + Integer.toString(debitDate.getDayOfMonth());
+                }
+                else {
+                    date += "-" + Integer.toString(debitDate.getDayOfMonth());
+                }
 
-                Debit postDebit = new Debit();
+                postDebit = new Debit();
                 postDebit.setAmount(amount);
                 postDebit.setLocalCategoryID(category.getID());
                 if(category.getServerID() != Common.UNKNOWN) {
@@ -84,20 +101,6 @@ public class PostDebitClick implements View.OnClickListener {
                 }
                 else {
                     canPostToServer = false;
-                }
-
-                date = Integer.toString(debitDate.getYear());
-                if(debitDate.getMonth() < 9) {
-                    date += "-0" + Integer.toString(debitDate.getMonth() + 1);
-                }
-                else {
-                    date += "-" + Integer.toString(debitDate.getMonth() + 1);
-                }
-                if(debitDate.getDayOfMonth() < 10) {
-                    date += "-0" + Integer.toString(debitDate.getDayOfMonth());
-                }
-                else {
-                    date += "-" + Integer.toString(debitDate.getDayOfMonth());
                 }
                 postDebit.setDateString(date);
                 postDebit.setComment(comment);
@@ -115,6 +118,7 @@ public class PostDebitClick implements View.OnClickListener {
                     this.storeSpinner.setSelection(0);
                     this.amountEditText.setText("");
                     this.commentEditText.setText("");
+                    Toast.makeText(this.context, "Debit Successfully Created", Toast.LENGTH_LONG).show();
                 }
 
                 //If Server IDs(Store/Category) exist, attempt to post to server.
@@ -127,9 +131,21 @@ public class PostDebitClick implements View.OnClickListener {
                     serverSynchroniser.synchroniseData();
                 }
             }
+            else {
+                if(this.categorySpinner.getSelectedItemPosition()==0){
+                    Toast.makeText(this.context, "Category Must be Selected", Toast.LENGTH_LONG).show();
+                }
+                else if(this.storeSpinner.getSelectedItemPosition()==0){
+                    Toast.makeText(this.context, "Payee Must be Selected", Toast.LENGTH_LONG).show();
+                }
+                else if(Double.parseDouble(this.amountEditText.getText().toString())==0){
+                    Toast.makeText(this.context, "Must Enter A Debit Amount", Toast.LENGTH_LONG).show();
+                }
+            }
         }
         catch (Exception e) {
             //TODO : Do something with this exception
+            Toast.makeText(this.context, "Error Creating Debit - May Need to be Re-Entered", Toast.LENGTH_LONG).show();
         }
     }
 }
