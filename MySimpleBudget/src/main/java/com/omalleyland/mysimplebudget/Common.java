@@ -14,7 +14,7 @@ public class Common {
     public static final int         UNKNOWN                             = -1;
 
     /* SQLite DB Constants */
-    public static final int         DATABASE_VERSION                    = 7;
+    public static final int         DATABASE_VERSION                    = 8;
     public static final String      DATABASE_NAME                       = APPLICATION_NAME + "DB";
 
     /* Database Table Status Constants */

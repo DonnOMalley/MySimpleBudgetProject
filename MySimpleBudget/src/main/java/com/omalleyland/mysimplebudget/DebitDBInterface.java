@@ -36,6 +36,8 @@ public class DebitDBInterface implements IObjectDBInterface {
     @Override
     public SyncObject cursorToSyncObject(Cursor cursor) {
 
+        String floatString;
+
         Log.v(className, "Writing Cursor to Debit Object");
 
         Debit debit = new Debit();
@@ -46,7 +48,7 @@ public class DebitDBInterface implements IObjectDBInterface {
         debit.setLocalStoreID(cursor.getInt(Common.colDEBIT_LOCAL_STORE_ID_INDEX));
         debit.setStoreID(cursor.getInt(Common.colDEBIT_SERVER_STORE_ID_INDEX));
         debit.setDateString(cursor.getString(Common.colDEBIT_DEBIT_DATE_INDEX));
-        debit.setAmount(Float.parseFloat(cursor.getString(Common.colDEBIT_DEBIT_AMOUNT_INDEX)));
+        debit.setAmount(Float.parseFloat((cursor.getString(Common.colDEBIT_DEBIT_AMOUNT_INDEX)).replace(",","")));
         debit.setComment(cursor.getString(Common.colDEBIT_COMMENT_INDEX));
         debit.setEntryOnString(cursor.getString(Common.colDEBIT_ENTRY_ON_INDEX));
 

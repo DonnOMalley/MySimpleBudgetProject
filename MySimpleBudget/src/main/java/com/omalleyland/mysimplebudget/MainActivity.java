@@ -161,7 +161,6 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
                 startActivityForResult(new Intent(MainActivity.this, CreateStore.class), Common.CREATE_STORE_RESULT_CODE);
                 return true;
             case R.id.action_upload_debits:
-              //TODO : Upload Debits to Server
 
               Toast.makeText(this, "Posting Debits to Server", Toast.LENGTH_LONG).show();
 
@@ -169,6 +168,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
               ServerSynchroniser serverSynchroniser = new ServerSynchroniser();
               serverSynchroniser.setContext(this);
               serverSynchroniser.setPostOnlyDebits(true);
+              serverSynchroniser.setShowDebitPostMsg(true);
               serverSynchroniser.synchroniseData();
 
               //Posting Complete Message will be shown when posting completes
@@ -412,6 +412,10 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         else if (resultCode == Common.LOGIN_CONNECTION_ERROR) {
             Log.d(className, "Login Connection Failed - Working Offline");
             setTitle(Common.APPLICATION_NAME + " - OFFLINE");
+            ArrayList<Boolean> updateUIList = new ArrayList<Boolean>();
+            updateUIList.add(true); //Update Categories
+            updateUIList.add(true); //Update Stores
+            updateUIControls(updateUIList);
         }
         else {
             Log.d(className, "Unknown Login Result :: Result Code =  " + Integer.toString(resultCode));

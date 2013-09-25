@@ -179,10 +179,7 @@ public class ServerSynchroniser {
             syncResult = "Error";
           }
 
-          if(postOnlyDebits && showDebitPostMsg) {
-            Toast.makeText(this.context, "Debits Have Been Posted", Toast.LENGTH_LONG).show();
-          }
-          else {
+          if(!postOnlyDebits) {
             publishProgress(syncResult);
           }
         }
@@ -215,6 +212,10 @@ public class ServerSynchroniser {
       if(!postOnlyDebits) {
         progressDialog.dismiss();
         bgProcessor.updateUIControls(result);
+      }
+      else if(showDebitPostMsg) {
+          Log.d(className, "Debits have been posted");
+          Toast.makeText(this.context, "Debits Have Been Posted", Toast.LENGTH_LONG).show();
       }
     }
 
