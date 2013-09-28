@@ -1,49 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <!-- App Name String -->
     <string name="app_name">My Simple Budget</string>
 
     <!-- Preference Activity Strings -->
-        <string name="preference_title">Preferences</string>
-        <string name="preference_summary">Global Application Settings</string>
+    <string name="preference_title">Preferences</string>
+    <string name="preference_summary">Global Application Settings</string>
+    <string name="preference_screen_server_info">Server Settings</string>
+    <string name="preference_screen_server_info_summary">MySimpleBudget Server addresses</string>
+    <string name="preference_server_address_title">Server Web Address</string>
+    <string name="preference_server_address_summary">Base web address where the Server resides</string>
+    <string name="preference_login_address_title">Login Page</string>
+    <string name="preference_login_address_summary">Web Page within the Server\'s Web Site that handles the user validation</string>
+    <string name="preference_category_address_title">Category Page</string>
+    <string name="preference_category_address_summary">Web Page within the Server\'s Web Site that handles the category data</string>
+    <string name="preference_store_address_title">Store Page</string>
+    <string name="preference_store_address_summary">Web Page within the Server\'s Web Site that handles the store data</string>
+    <string name="preference_debit_address_title">Debit Page</string>
+    <string name="preference_debit_address_summary">Web Page within the Server\'s Web Site that handles the debit data</string>
+    <!-- End of Server Settings Preference Screen Preferences -->
 
-        <string name="preference_screen_server_info">Server Settings</string>
-        <string name="preference_screen_server_info_summary">MySimpleBudget Server addresses</string>
-        <string name="preference_server_address_title">Server Web Address</string>
-        <string name="preference_server_address_summary">Base web address where the Server resides</string>
-        <string name="preference_login_address_title">Login Page</string>
-        <string name="preference_login_address_summary">Web Page within the Server\'s Web Site that handles the user validation</string>
-        <string name="preference_category_address_title">Category Page</string>
-        <string name="preference_category_address_summary">Web Page within the Server\'s Web Site that handles the category data</string>
-        <string name="preference_store_address_title">Store Page</string>
-        <string name="preference_store_address_summary">Web Page within the Server\'s Web Site that handles the store data</string>
-        <string name="preference_debit_address_title">Debit Page</string>
-        <string name="preference_debit_address_summary">Web Page within the Server\'s Web Site that handles the debit data</string>
-        <!-- End of Server Settings Preference Screen Preferences -->
-
-        <string name="preference_screen_login_info">Login Settings</string>
-        <string name="preference_screen_login_info_summary">MySimpleBudget Server Username and Password information</string>
-        <string name="preference_login_username_title">Username</string>
-        <string name="preference_login_username_summary">Username registered with MySimpleBudget Server</string>
-        <string name="preference_login_password_title">Password</string>
-        <string name="preference_login_password_summary">Password associated with Username</string>
-        <!-- End of Login Settings Preference Screen Preferences -->
+    <string name="preference_screen_login_info">Login Settings</string>
+    <string name="preference_screen_login_info_summary">MySimpleBudget Server Username and Password information</string>
+    <string name="preference_login_username_title">Username</string>
+    <string name="preference_login_username_summary">Username registered with MySimpleBudget Server</string>
+    <string name="preference_login_password_title">Password</string>
+    <string name="preference_login_password_summary">Password associated with Username</string>
+    <!-- End of Login Settings Preference Screen Preferences -->
     <!-- End of Preference Activity Strings -->
 
+
     <!-- Main Menu Action Strings -->
-        <string name="action_preferences">Preferences</string>
-        <string name="action_logout">Log Out</string>
-        <string name="action_sign_in_short">Sign in</string>
-        <string name="action_add_user">Add User</string>
-        <string name="action_user_lookup">User Lookup</string>
-        <string name="action_user_remove">Remove User</string>
-        <string name="action_upload_debits">Upload Debits</string>
-        <string name="action_create_category">Create Category</string>
-        <string name="action_create_store">Create Store</string>
-        <string name="action_manual_sync_all_configuration">Full Sync</string>
+    <string name="action_preferences">Preferences</string>
+    <string name="action_logout">Log Out</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_add_user">Add User</string>
+    <string name="action_user_lookup">User Lookup</string>
+    <string name="action_user_remove">Remove User</string>
+    <string name="action_upload_debits">Upload Debits</string>
+    <string name="action_create_category">Create Category</string>
+    <string name="action_create_store">Create Store</string>
+    <string name="action_manual_sync_all_configuration">Full Sync</string>
     <!-- End of Main Menu Action Strings -->
+
 
     <!-- UI Helper Strings -->
     <item name="category_spinner_prompt" type="id">Select a Category</item>
     <item name="store_spinner_prompt" type="id">Select a Store</item>
     <!-- End of UI Helper Strings -->
+    <string name="title_activity_webview">My Simple Budget</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>

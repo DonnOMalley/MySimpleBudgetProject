@@ -40,4 +40,29 @@
                             android:title="@string/preference_login_password_title"
                             android:summary="@string/preference_login_password_summary" />
     </PreferenceScreen>
+
+    <CheckBoxPreference android:key="preferenceOffline"
+                        android:title="Startup Offline"
+                        android:disableDependentsState="true"
+                        android:summary="When Selected the application will default to offline" />
+
+    <CheckBoxPreference android:key="preferenceSyncOnLoad"
+                        android:title="Automatically Sync Configuration on Startup"
+                        android:dependency="preferenceOffline"
+                        android:summary="When selected, application will attempt to sync configuration each time the app is launched" />
+    <PreferenceScreen android:title="Budget Info Web Addresses"
+                      android:summary="Web addresses for viewing budget and spending information">
+
+        <EditTextPreference android:key="spendingInfoAddress"
+            android:title="Spending Info Web Address"
+            android:summary="Web Address for viewing spending information" />
+
+        <EditTextPreference android:key="budgetInfoAddress"
+            android:title="Budget Info Web Address"
+            android:summary="Web Address for viewing budget information" />
+
+        <EditTextPreference android:key="spendingGraphAddress"
+            android:title="Spending Graphs Web Address"
+            android:summary="Web Address for viewing spending graph information" />
+    </PreferenceScreen>
 </PreferenceScreen>

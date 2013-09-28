@@ -25,4 +25,16 @@
           android:title="@string/action_manual_sync_all_configuration"
           android:visible="true"
           android:showAsAction="never" />
+    <item android:id="@+id/budget_info"
+        android:title="Info"
+        android:visible="true"
+        android:showAsAction="never" />
+    <item android:id="@+id/spending_budget"
+        android:title="Budget"
+        android:visible="true"
+        android:showAsAction="never" />
+    <item android:id="@+id/budget_graph"
+        android:title="Graphs"
+        android:visible="true"
+        android:showAsAction="never" />
 </menu>

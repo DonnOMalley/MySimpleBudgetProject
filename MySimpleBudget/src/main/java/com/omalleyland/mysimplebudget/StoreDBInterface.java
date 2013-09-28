@@ -183,7 +183,12 @@ public class StoreDBInterface implements IObjectDBInterface {
             if(cursor.moveToFirst()) {
                 do {
                     store = (Store)cursorToSyncObject(cursor);
-                    storeList.add(store);
+                    if(store.getName().equalsIgnoreCase("Other")) {
+                        storeList.add(0, store);
+                    }
+                    else {
+                        storeList.add(store);
+                    }
                     Log.d(className, "Store Record Returned :: id = " + Integer.toString(store.getID()) +
                             ", name = " + store.getName() +
                             ", serverID = " + Integer.toString(store.getServerID()) +

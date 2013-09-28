@@ -38,9 +38,11 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
     private EditText    etComment;
     private Button      btnPostDebit;
 
-    private String className;
-    private String serverAddress;
-    private String loginValidationPage;
+    private String  className;
+    private String  serverAddress;
+    private String  loginValidationPage;
+    private Boolean offlineStartup;
+    private Boolean autoSyncStartup;
 
     private ValidateLogin validateLogin;
     private ServerSynchroniser serverSynchroniser;
@@ -83,25 +85,34 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         this.loginValidationPage    = prefs.getString(Common.SERVER_LOGIN_ADDRESS_PREFERENCE, "");
         userName                    = prefs.getString(Common.USER_NAME_PREFERENCE, "");
         password                    = prefs.getString(Common.PASSWORD_PREFERENCE, "");
+        offlineStartup              = prefs.getBoolean(Common.OFFLINE_PREFERENCE, false);
+        autoSyncStartup             = prefs.getBoolean(Common.AUTO_SYNC_PREFERENCE, true);
         Log.d(className, "Preferences Assigned to Local Variables");
 
-        //Check Server/Login Information and react accordingly
-        if((this.serverAddress.length() == 0) || (this.loginValidationPage.length() == 0)) {
-            //Launch Preference Dialog
-            Log.d(className, "Missing Server Information - Launching Preferences Activity");
-            startActivityForResult(new Intent(this, Preferences.class), Common.PREFERENCE_RESULT_CODE);
-        }
-        else if(userName.length() > 0 && password.length() > 0) {
-            Log.d(className, "Starting Async Login Attempt");
-            if(!this.serverAddress.endsWith("/")) {
-                this.serverAddress = this.serverAddress.concat("/");
+        if(!offlineStartup) {
+            //Check Server/Login Information and react accordingly
+            if((this.serverAddress.length() == 0) || (this.loginValidationPage.length() == 0)) {
+                //Launch Preference Dialog
+                Log.d(className, "Missing Server Information - Launching Preferences Activity");
+                startActivityForResult(new Intent(this, Preferences.class), Common.PREFERENCE_RESULT_CODE);
             }
-            validateLogin = new ValidateLogin(this, this, this.serverAddress.concat(this.loginValidationPage), userName, password);
-            validateLogin.executeValidation();
+            else if(userName.length() > 0 && password.length() > 0) {
+                Log.d(className, "Starting Async Login Attempt");
+                if(!this.serverAddress.endsWith("/")) {
+                    this.serverAddress = this.serverAddress.concat("/");
+                }
+                validateLogin = new ValidateLogin(this, this, this.serverAddress.concat(this.loginValidationPage), userName, password);
+                validateLogin.executeValidation();
+            }
+            else {
+                Log.d(className, "Missing Login Information - Launching Login Activity");
+                startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
+            }
         }
         else {
-            Log.d(className, "Missing Login Information - Launching Login Activity");
-            startActivityForResult(new Intent(this, LoginActivity.class), Common.LOGIN_RESULT_CODE);
+            //Populate UI off of configuration
+            loadCategorySpinner();
+            loadStoreSpinner();
         }
     }
 
@@ -152,6 +163,8 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        String web_address;
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_create_category:
@@ -182,6 +195,30 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
                 //Force Synchronization again
                 synchroniseConfiguration();
                 return true;
+            case R.id.budget_graph:
+                intent = new Intent(this, webview.class);
+                web_address = prefs.getString(Common.SPENDING_GRAPH_PREFERENCE, "");
+                if(web_address.length() > 0) {
+                    intent.putExtra(Common.WEB_VIEW_INTENT, web_address);
+                    startActivity(intent);
+                }
+                return true;
+            case R.id.budget_info:
+                intent = new Intent(this, webview.class);
+                web_address = prefs.getString(Common.SPENDING_INFO_PREFERENCE, "");
+                if(web_address.length() > 0) {
+                    intent.putExtra(Common.WEB_VIEW_INTENT, web_address);
+                    startActivity(intent);
+                }
+                return true;
+            case R.id.spending_budget:
+                intent = new Intent(this, webview.class);
+                web_address = prefs.getString(Common.BUDGET_INFO_PREFERENCE, "");
+                if(web_address.length() > 0) {
+                    intent.putExtra(Common.WEB_VIEW_INTENT, web_address);
+                    startActivity(intent);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -205,7 +242,13 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
               }
               Log.d(className, "User(" + userName + ") Token = " + passwordHash);
 
-              synchroniseConfiguration();
+              if(autoSyncStartup) {
+                synchroniseConfiguration();
+              }
+              else {
+                  loadCategorySpinner();
+                  loadStoreSpinner();
+              }
             }
             else if(resultCode == Common.LOGIN_CONNECTION_ERROR) {
               Log.d(className, "Login Connection Failed - Working Offline");
@@ -238,6 +281,8 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             this.loginValidationPage    = prefs.getString(Common.SERVER_LOGIN_ADDRESS_PREFERENCE, "");
             userName                    = prefs.getString(Common.USER_NAME_PREFERENCE, "");
             password                    = prefs.getString(Common.PASSWORD_PREFERENCE, "");
+            offlineStartup              = prefs.getBoolean(Common.OFFLINE_PREFERENCE, false);
+            autoSyncStartup             = prefs.getBoolean(Common.AUTO_SYNC_PREFERENCE, true);
 
             if((this.serverAddress.length() == 0) || (this.loginValidationPage.length() == 0)) {
                 Log.d(className, "Validation Server Missing - Application Exiting");
@@ -245,19 +290,21 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
                 this.finish();
             }
             else if(userName.length() > 0 && password.length() > 0) {
-                Log.d(className, "Starting Async Login Attempt");
-                if(!this.serverAddress.endsWith("/")) {
-                    this.serverAddress = this.serverAddress.concat("/");
+                if(!offlineStartup) {
+                    Log.d(className, "Starting Async Login Attempt");
+                    if(!this.serverAddress.endsWith("/")) {
+                        this.serverAddress = this.serverAddress.concat("/");
+                    }
+                    if(validateLogin == null) {
+                        validateLogin = new ValidateLogin(this, this, this.serverAddress.concat(this.loginValidationPage), userName, password);
+                    }
+                    else {
+                        validateLogin.setValidationServer(this.serverAddress.concat(this.loginValidationPage));
+                        validateLogin.setUserName(userName);
+                        validateLogin.setPassword(password);
+                    }
+                    validateLogin.executeValidation();
                 }
-                if(validateLogin == null) {
-                    validateLogin = new ValidateLogin(this, this, this.serverAddress.concat(this.loginValidationPage), userName, password);
-                }
-                else {
-                    validateLogin.setValidationServer(this.serverAddress.concat(this.loginValidationPage));
-                    validateLogin.setUserName(userName);
-                    validateLogin.setPassword(password);
-                }
-                validateLogin.executeValidation();
             }
             else {
                 Log.d(className, "Username and/or Password still not assigned - Launching Login Activity");
@@ -398,7 +445,13 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             userName = prefs.getString(Common.USER_NAME_PREFERENCE, "");
             Log.d(className, "User(" + userName + ") Token = " + passwordHash);
 
-            synchroniseConfiguration();
+            if(autoSyncStartup) {
+                synchroniseConfiguration();
+            }
+            else {
+                loadCategorySpinner();
+                loadStoreSpinner();
+            }
         }
         else if (resultCode == Common.LOGIN_CANCELED) {
             Log.d(className, "Login Canceled - Exiting Application");
@@ -427,48 +480,48 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         String selectedCategory = "";
         String selectedStore    = "";
 
-        if(updateUIControlList.get(Common.CATEGORY_UI_CONTROL_INDEX)) {
-            Log.d(className, "IBackgroundProcessor Call Back for Updating UI Categories :: Update = " + Boolean.toString(updateUIControlList.get(Common.CATEGORY_UI_CONTROL_INDEX)));
-
-            //Get Selected Category by Name
-            Log.d(className, "Getting Selected Category");
-            if(spCategorySpinner.getCount() > 0) {
-                selectedCategory = ((Category)spCategorySpinner.getSelectedItem()).getName();
-            }
-
+//        if(updateUIControlList.get(Common.CATEGORY_UI_CONTROL_INDEX)) {
+//            Log.d(className, "IBackgroundProcessor Call Back for Updating UI Categories :: Update = " + Boolean.toString(updateUIControlList.get(Common.CATEGORY_UI_CONTROL_INDEX)));
+//
+//            //Get Selected Category by Name
+//            Log.d(className, "Getting Selected Category");
+//            if(spCategorySpinner.getCount() > 0) {
+//                selectedCategory = ((Category)spCategorySpinner.getSelectedItem()).getName();
+//            }
+//
             Log.d(className, "Updating Category Spinner");
             //Reload Category Spinner and select the same one that was originally selected
             loadCategorySpinner();
-            if(selectedCategory.length() > 0) {
-                for(int i=0; i<spCategorySpinner.getAdapter().getCount(); i++) {
-                    if(selectedCategory.equals(((Category)spCategorySpinner.getItemAtPosition(i)).getName())) {
-                        spCategorySpinner.setSelection(i);
-                        break;
-                    }
-                }
-            }
-        }
+//            if(selectedCategory.length() > 0) {
+//                for(int i=0; i<spCategorySpinner.getAdapter().getCount(); i++) {
+//                    if(selectedCategory.equals(((Category)spCategorySpinner.getItemAtPosition(i)).getName())) {
+//                        spCategorySpinner.setSelection(i);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
 
-        if(updateUIControlList.get(Common.STORE_UI_CONTROL_INDEX)) {
-            Log.d(className, "IBackgroundProcessor Call Back for Updating UI Categories :: Update = " + Boolean.toString(updateUIControlList.get(Common.STORE_UI_CONTROL_INDEX)));
-
-            //Get Selected Store by Name
-            Log.d(className, "Getting Selected Store");
-            if(spStoreSpinner.getCount() > 0) {
-                selectedStore = ((Store)spStoreSpinner.getSelectedItem()).getName();
-            }
-
+//        if(updateUIControlList.get(Common.STORE_UI_CONTROL_INDEX)) {
+//            Log.d(className, "IBackgroundProcessor Call Back for Updating UI Categories :: Update = " + Boolean.toString(updateUIControlList.get(Common.STORE_UI_CONTROL_INDEX)));
+//
+//            //Get Selected Store by Name
+//            Log.d(className, "Getting Selected Store");
+//            if(spStoreSpinner.getCount() > 0) {
+//                selectedStore = ((Store)spStoreSpinner.getSelectedItem()).getName();
+//            }
+//
             //Reload Store Spinner and select the same one that was originally selected
             Log.d(className, "Updating Store Spinner");
             loadStoreSpinner();
-            if(selectedStore.length() > 0) {
-                for(int i=0; i<spStoreSpinner.getAdapter().getCount(); i++) {
-                    if(selectedStore.equals(((Store)spStoreSpinner.getItemAtPosition(i)).getName())) {
-                        spStoreSpinner.setSelection(i);
-                        break;
-                    }
-                }
-            }
-        }
+//            if(selectedStore.length() > 0) {
+//                for(int i=0; i<spStoreSpinner.getAdapter().getCount(); i++) {
+//                    if(selectedStore.equals(((Store)spStoreSpinner.getItemAtPosition(i)).getName())) {
+//                        spStoreSpinner.setSelection(i);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
     }
 }

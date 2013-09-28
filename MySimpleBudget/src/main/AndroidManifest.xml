@@ -11,31 +11,35 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-            android:allowBackup="true"
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme" >
-
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
         <activity
-                android:name="com.omalleyland.mysimplebudget.MainActivity"
-                android:label="@string/app_name"
-                android:configChanges="orientation|keyboardHidden|screenSize" >
-                <!--android:windowSoftInputMode="adjustResize|stateVisible" -->
+            android:name="com.omalleyland.mysimplebudget.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name" >
+
+            <!-- android:windowSoftInputMode="adjustResize|stateVisible" -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-                android:name="com.omalleyland.mysimplebudget.LoginActivity"
-                android:label="@string/app_name" >
-            <!--android:windowSoftInputMode="adjustResize|stateVisible" -->
-        </activity>
+            android:name="com.omalleyland.mysimplebudget.LoginActivity"
+            android:label="@string/app_name" >
 
-        <activity android:name="Preferences"></activity>
-        <activity android:name=".CreateStore"/>
-        <activity android:name=".CreateCategory"/>
+            <!-- android:windowSoftInputMode="adjustResize|stateVisible" -->
+        </activity>
+        <activity android:name="com.omalleyland.mysimplebudget.Preferences" />
+        <activity android:name="com.omalleyland.mysimplebudget.CreateStore" />
+        <activity android:name="com.omalleyland.mysimplebudget.CreateCategory" />
+        <activity
+            android:name="com.omalleyland.mysimplebudget.webview"
+            android:label="@string/title_activity_webview" >
+        </activity>
     </application>
 
 </manifest>

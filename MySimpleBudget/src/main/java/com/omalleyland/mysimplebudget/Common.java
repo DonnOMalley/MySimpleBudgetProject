@@ -132,6 +132,8 @@ public class Common {
     public static final String      SERVER_DEBIT_ADDRESS_PREFERENCE     = "preferenceServerDebitAddress";
     public static final String      USER_NAME_PREFERENCE                = "preferenceLoginUserName";
     public static final String      PASSWORD_PREFERENCE                 = "preferenceLoginPassword";
+    public static final String      OFFLINE_PREFERENCE                  = "preferenceOffline";
+    public static final String      AUTO_SYNC_PREFERENCE                = "preferenceSyncOnLoad";
 
     /* Login Activity Intent Extras/Constants */
     public static final String      LOGIN_RESULT_USER_EXTRA             = "LOGIN_RESULT_USER";
@@ -171,6 +173,9 @@ public class Common {
     public static final String      HTTP_RESPONSE_RESULT                = "result";
     public static final String      HTTP_RESPONSE_RESULT_SUCCESS        = "success";
     public static final String      HTTP_RESPONSE_TIMESTAMP             = "timestamp";
+    public static final String      BUDGET_INFO_PREFERENCE              = "budgetInfo";
+    public static final String      SPENDING_INFO_PREFERENCE            = "spendingInfo";
+    public static final String      SPENDING_GRAPH_PREFERENCE           = "spendingGraph";
 
     public static final int         SYNC_OBJECT_TYPE_CATEGORY           = 0;
     public static final int         SYNC_OBJECT_TYPE_STORE              = 1;
@@ -189,4 +194,5 @@ public class Common {
     public static final String      DEBIT_JSON_ARRAY                    = "debitArray";
     public static final String      USER_ID_PREFERENCE                  = "userID";
 
+    public static final String      WEB_VIEW_INTENT                     = "web_view_intent";
 }
