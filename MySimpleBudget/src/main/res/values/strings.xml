@@ -28,20 +28,41 @@
     <string name="preference_login_password_title">Password</string>
     <string name="preference_login_password_summary">Password associated with Username</string>
     <!-- End of Login Settings Preference Screen Preferences -->
+
+    <string name="preference_startup_offline">Startup Offline</string>
+    <string name="preference_startup_offline_summary">Select to use the application in offline mode by default</string>
+    <string name="preference_automatically_sync_data">Automatically Sync Data on Startup</string>
+    <string name="preference_automatically_sync_data_summary">Sync Configuration and Debits automatically on startup</string>
+
+    <!-- Budget/Spending Info Preference Screen Preferences -->
+    <string name="preference_budget_spending_info_title">Budget/Spending Info Web Addresses</string>
+    <string name="preference_budget_spending_info_summary">Web Addresses for viewing budget and spending information</string>
+    <string name="preference_spending_info_webpage_title">Spending Info Web Address</string>
+    <string name="preference_spending_info_webpage_summary">Web Address for viewing spending information</string>
+    <string name="preference_budget_info_webpage_title">Budget Info Web Address</string>
+    <string name="preference_budget_info_webpage_summary">Web Address for viewing budget information</string>
+    <string name="preference_spending_graph_webpage_title">Spending Graph Web Address</string>
+    <string name="preference_spending_graph_webpage_summary">Web Address for viewing spending graphs</string>
+    <!-- End of Budget/Spending Info Preference Screen Preferences -->
+
     <!-- End of Preference Activity Strings -->
 
 
     <!-- Main Menu Action Strings -->
     <string name="action_preferences">Preferences</string>
-    <string name="action_logout">Log Out</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="action_add_user">Add User</string>
-    <string name="action_user_lookup">User Lookup</string>
-    <string name="action_user_remove">Remove User</string>
     <string name="action_upload_debits">Upload Debits</string>
     <string name="action_create_category">Create Category</string>
     <string name="action_create_store">Create Store</string>
     <string name="action_manual_sync_all_configuration">Full Sync</string>
+    <string name="action_budget_info_webpage">Budget</string>
+    <string name="action_spending_info_webpage">Spending Info</string>
+    <string name="action_spending_graph_webpage">Spending Graphs</string>
+
+    <!--<string name="action_logout">Log Out</string>-->
+    <!--<string name="action_sign_in_short">Sign in</string>-->
+    <!--<string name="action_add_user">Add User</string>-->
+    <!--<string name="action_user_lookup">User Lookup</string>-->
+    <!--<string name="action_user_remove">Remove User</string>-->
     <!-- End of Main Menu Action Strings -->
 
 

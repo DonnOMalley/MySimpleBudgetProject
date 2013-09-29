@@ -42,27 +42,28 @@
     </PreferenceScreen>
 
     <CheckBoxPreference android:key="preferenceOffline"
-                        android:title="Startup Offline"
+                        android:title="@string/preference_startup_offline"
                         android:disableDependentsState="true"
-                        android:summary="When Selected the application will default to offline" />
+                        android:summary="@string/preference_startup_offline_summary" />
 
     <CheckBoxPreference android:key="preferenceSyncOnLoad"
-                        android:title="Automatically Sync Configuration on Startup"
+                        android:title="@string/preference_automatically_sync_data"
                         android:dependency="preferenceOffline"
-                        android:summary="When selected, application will attempt to sync configuration each time the app is launched" />
-    <PreferenceScreen android:title="Budget Info Web Addresses"
-                      android:summary="Web addresses for viewing budget and spending information">
+                        android:summary="@string/preference_automatically_sync_data_summary" />
+
+    <PreferenceScreen android:title="@string/preference_budget_spending_info_title"
+                      android:summary="@string/preference_budget_spending_info_summary">
 
         <EditTextPreference android:key="spendingInfoAddress"
-            android:title="Spending Info Web Address"
-            android:summary="Web Address for viewing spending information" />
+                            android:title="@string/preference_spending_info_webpage_title"
+                            android:summary="@string/preference_spending_info_webpage_summary" />
 
         <EditTextPreference android:key="budgetInfoAddress"
-            android:title="Budget Info Web Address"
-            android:summary="Web Address for viewing budget information" />
+                            android:title="@string/preference_budget_info_webpage_title"
+                            android:summary="@string/preference_budget_info_webpage_summary" />
 
         <EditTextPreference android:key="spendingGraphAddress"
-            android:title="Spending Graphs Web Address"
-            android:summary="Web Address for viewing spending graph information" />
+                            android:title="@string/preference_spending_graph_webpage_title"
+                            android:summary="@string/preference_spending_graph_webpage_summary" />
     </PreferenceScreen>
 </PreferenceScreen>
