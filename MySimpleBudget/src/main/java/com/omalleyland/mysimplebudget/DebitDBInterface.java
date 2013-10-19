@@ -142,13 +142,13 @@ public class DebitDBInterface implements IObjectDBInterface {
     }
 
     @Override
-    public SyncObject getObject(int id) {
+    public SyncObject getObject(int clientID) {
         SQLiteDatabase db;
         Debit debit= new Debit();
         try {
             db = dbHelper.getWritableDatabase();
-            Log.v(className, "Querying Debits by ID = " + Integer.toString(id));
-            Cursor cursor = db.query(Common.tblDebits, Common.colDEBITS_ALL, Common.colDEBIT_ID + " = ?", new String[]{Integer.toString(id)}, null, null, null);
+            Log.v(className, "Querying Debits by ID = " + Integer.toString(clientID));
+            Cursor cursor = db.query(Common.tblDebits, Common.colDEBITS_ALL, Common.colDEBIT_ID + " = ?", new String[]{Integer.toString(clientID)}, null, null, null);
             if(cursor.getCount() == 1) {
                 cursor.moveToFirst();
                 debit = (Debit)cursorToSyncObject(cursor);

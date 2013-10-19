@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.view.ViewDebug;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -105,13 +106,13 @@ public class StoreDBInterface implements IObjectDBInterface {
     }
 
     @Override
-    public SyncObject getObject(int id) {
+    public SyncObject getObject(int serverID) {
         SQLiteDatabase db;
         Store store = new Store();
         try {
             db = dbHelper.getWritableDatabase();
-            Log.v(className, "Querying Store by ID = " + Integer.toString(id));
-            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_NAME + " = ?", new String[]{Integer.toString(id)}, null, null, null);
+            Log.v(className, "Querying Store by Server ID = " + Integer.toString(serverID));
+            Cursor cursor = db.query(Common.tblSTORES, Common.colSTORES_ALL, Common.colSTORE_SERVER_ID + " = ?", new String[]{Integer.toString(serverID)}, null, null, null);
             if(cursor.getCount() == 1) {
                 cursor.moveToFirst();
                 store = (Store)cursorToSyncObject(cursor);
@@ -297,44 +298,49 @@ public class StoreDBInterface implements IObjectDBInterface {
         //For each record in the List<Store>, update SQLite
         SQLiteDatabase db;
         int updatedRecords = 0;
-        String whereClause = Common.colSTORE_NAME + " = ?";
+        String whereClause = Common.colSTORE_ID + " = ?";
         String[] whereArgs;
         ContentValues values = new ContentValues();
 
         Log.v(className, "Updating Stores with Values from List");
         try {
-            db = dbHelper.getWritableDatabase();
-
             Store existingStore;
             for(SyncObject syncObject : syncObjects) {
+              if(syncObject.getServerID() != Common.UNKNOWN) {
+                existingStore = (Store)getObject(syncObject.getServerID());
+              }
+              else {
                 existingStore = (Store)getObject(syncObject.getName());
-                if(existingStore != null) {
-                    values.clear();
-                    values.put(Common.colSTORE_ID, syncObject.getID());
-                    values.put(Common.colSTORE_NAME, syncObject.getName());
-                    values.put(Common.colSTORE_SERVER_ID, syncObject.getServerID());
-                    values.put(Common.colSTORE_SYNC_STATUS, syncObject.getSyncStatus());
-                    values.put(Common.colSTORE_ACTIVE_STATUS, syncObject.getActiveStatus());
-                    whereArgs = new String[]{syncObject.getName()};
-                    Log.d(className, "Updating Store Record :: id = " + Integer.toString(syncObject.getID()) +
-                            ", name = " + syncObject.getName() +
-                            ", serverID = " + Integer.toString(syncObject.getServerID()) +
-                            ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
-                            ", activeStatus = " + Integer.toString(syncObject.getActiveStatus()));
-                    updatedRecords = updatedRecords + db.update(Common.tblSTORES, values, whereClause, whereArgs);
+              }
+              db = dbHelper.getWritableDatabase();
+              if(existingStore != null) {
+                values.clear();
+                values.put(Common.colSTORE_ID, existingStore.getID());
+                values.put(Common.colSTORE_NAME, syncObject.getName());
+                values.put(Common.colSTORE_SERVER_ID, syncObject.getServerID());
+                values.put(Common.colSTORE_SYNC_STATUS, syncObject.getSyncStatus());
+                values.put(Common.colSTORE_ACTIVE_STATUS, syncObject.getActiveStatus());
+                whereArgs = new String[]{Integer.toString(existingStore.getID())};
+                Log.d(className, "Updating Store Record :: id = " + Integer.toString(existingStore.getID()) +
+                        ", name = " + syncObject.getName() +
+                        ", serverID = " + Integer.toString(syncObject.getServerID()) +
+                        ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
+                        ", activeStatus = " + Integer.toString(syncObject.getActiveStatus()));
+                updatedRecords = updatedRecords + db.update(Common.tblSTORES, values, whereClause, whereArgs);
+              }
+              else {
+                if(addObject(syncObject) > -1) {
+                  updatedRecords += 1;
                 }
-                else {
-                    if(addObject(syncObject) > -1) {
-                        updatedRecords += 1;
-                    }
-                }
+              }
+              dbHelper.close();
             }
             Log.d(className, "Number of Store Records = " + Integer.toString(updatedRecords));
         }
         catch (Exception e) {
-            Log.e(className, "Exception Updating Stores from Server :: " + e.getMessage());
+          Log.e(className, "Exception Updating Stores from Server :: " + e.getMessage());
+          dbHelper.close();
         }
-        dbHelper.close();
         return updatedRecords;
     }
 
@@ -343,29 +349,34 @@ public class StoreDBInterface implements IObjectDBInterface {
         //For each record in the List<Category>, update SQLite
         SQLiteDatabase db;
         int updatedRecords = 0;
-        String whereClause = Common.colSTORE_NAME + " = ?";
+        String whereClause = Common.colSTORE_ID + " = ?";
         String[] whereArgs;
         ContentValues values = new ContentValues();
 
         Log.v(className, "Updating Stores with Values from List");
         try {
-            db = dbHelper.getWritableDatabase();
 
             Store existingStore;
             for(SyncObject syncObject : syncObjects) {
                 //Check for category to exist,
                 //  if exists, update
                 //  else add
-                existingStore = (Store)getObject(syncObject.getName());
+                if(syncObject.getServerID() != Common.UNKNOWN) {
+                  existingStore = (Store)getObject(syncObject.getServerID());
+                }
+                else {
+                  existingStore = (Store)getObject(syncObject.getName());
+                }
+                db = dbHelper.getWritableDatabase();
                 if(existingStore!=null) {
                     values.clear();
-                    values.put(Common.colSTORE_ID, syncObject.getID());
+                    values.put(Common.colSTORE_ID, existingStore.getID());
                     values.put(Common.colSTORE_NAME, syncObject.getName());
                     values.put(Common.colSTORE_SERVER_ID, syncObject.getServerID());
                     values.put(Common.colSTORE_SYNC_STATUS, syncStatus);
                     values.put(Common.colSTORE_ACTIVE_STATUS, syncObject.getActiveStatus());
-                    whereArgs = new String[]{syncObject.getName()};
-                    Log.d(className, "Updating store Record :: id = " + Integer.toString(syncObject.getID()) +
+                    whereArgs = new String[]{Integer.toString(existingStore.getID())};
+                    Log.d(className, "Updating store Record :: id = " + Integer.toString(existingStore.getID()) +
                             ", name = " + syncObject.getName() +
                             ", serverID = " + Integer.toString(syncObject.getServerID()) +
                             ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
@@ -377,13 +388,14 @@ public class StoreDBInterface implements IObjectDBInterface {
                         updatedRecords += 1;
                     }
                 }
+                dbHelper.close();
             }
             Log.d(className, "Number of Store Records = " + Integer.toString(updatedRecords));
         }
         catch (Exception e) {
             Log.e(className, "Exception Updating Stores from Server :: " + e.getMessage());
+            dbHelper.close();
         }
-        dbHelper.close();
         return updatedRecords;
     }
 

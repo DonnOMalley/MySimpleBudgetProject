@@ -19,7 +19,7 @@ public interface IObjectDBInterface {
 
     public abstract int deleteObject(SyncObject syncObject);
 
-    public abstract SyncObject getObject(int id);
+    public abstract SyncObject getObject(int clientID);
 
     public abstract SyncObject getObject(String name);
 

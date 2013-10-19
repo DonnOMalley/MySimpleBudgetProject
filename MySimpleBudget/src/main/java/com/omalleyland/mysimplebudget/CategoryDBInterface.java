@@ -111,13 +111,13 @@ public class CategoryDBInterface implements IObjectDBInterface {
     }
 
     @Override
-    public SyncObject getObject(int id) {
+    public SyncObject getObject(int serverID) {
         SQLiteDatabase db;
         Category category = new Category();
         try {
             db = dbHelper.getWritableDatabase();
-            Log.v(className, "Querying Category by ID = " + Integer.toString(id));
-            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_ID + " = ?", new String[]{Integer.toString(id)}, null, null, null);
+            Log.v(className, "Querying Category by ID = " + Integer.toString(serverID));
+            Cursor cursor = db.query(Common.tblCATEGORIES, Common.colCATEGORIES_ALL, Common.colCATEGORY_SERVER_ID + " = ?", new String[]{Integer.toString(serverID)}, null, null, null);
             if(cursor.getCount() == 1) {
                 cursor.moveToFirst();
                 category = (Category)cursorToSyncObject(cursor);
@@ -298,7 +298,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
         //For each record in the List<Category>, update SQLite
         SQLiteDatabase db;
         int updatedRecords = 0;
-        String whereClause = Common.colCATEGORY_NAME + " = ?";
+        String whereClause = Common.colCATEGORY_ID + " = ?";
         String[] whereArgs;
         ContentValues values = new ContentValues();
 
@@ -310,16 +310,21 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 //Check for category to exist,
                 //  if exists, update
                 //  else add
-                existingCategory = (Category)getObject(syncObject.getName());
-                if(existingCategory!=null) {
+                if(syncObject.getServerID() != Common.UNKNOWN) {
+                  existingCategory = (Category)getObject(syncObject.getServerID());
+                }
+                else {
+                  existingCategory = (Category)getObject(syncObject.getName());
+                }
+              if(existingCategory!=null) {
                     db = dbHelper.getWritableDatabase();
                     values.clear();
                     values.put(Common.colCATEGORY_NAME, syncObject.getName());
                     values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
                     values.put(Common.colCATEGORY_SYNC_STATUS, syncObject.getSyncStatus());
                     values.put(Common.colCATEGORY_ACTIVE_STATUS, syncObject.getActiveStatus());
-                    whereArgs = new String[]{syncObject.getName()};
-                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(syncObject.getID()) +
+                    whereArgs = new String[]{Integer.toString(existingCategory.getID())};
+                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(existingCategory.getID()) +
                             ", name = " + syncObject.getName() +
                             ", serverID = " + Integer.toString(syncObject.getServerID()) +
                             ", syncStatus = " + Integer.toString(syncObject.getSyncStatus()) +
@@ -336,7 +341,8 @@ public class CategoryDBInterface implements IObjectDBInterface {
             Log.d(className, "Number of Category Records = " + Integer.toString(updatedRecords));
         }
         catch (Exception e) {
-            Log.e(className, "Exception Updating Categories from Server :: " + e.getMessage());
+          Log.e(className, "Exception Updating Categories from Server :: " + e.getMessage());
+          dbHelper.close();
         }
         return updatedRecords;
     }
@@ -346,7 +352,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
         //For each record in the List<Category>, update SQLite
         SQLiteDatabase db;
         int updatedRecords = 0;
-        String whereClause = Common.colCATEGORY_NAME + " = ?";
+        String whereClause = Common.colCATEGORY_ID + " = ?";
         String[] whereArgs;
         ContentValues values = new ContentValues();
 
@@ -358,7 +364,12 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 //Check for category to exist,
                 //  if exists, update
                 //  else add
-                existingCategory = (Category)getObject(syncObject.getName());
+                if(syncObject.getServerID() != Common.UNKNOWN) {
+                  existingCategory = (Category)getObject(syncObject.getServerID());
+                }
+                else {
+                  existingCategory = (Category)getObject(syncObject.getName());
+                }
                 if(existingCategory!=null) {
                     db = dbHelper.getWritableDatabase();
                     values.clear();
@@ -366,8 +377,8 @@ public class CategoryDBInterface implements IObjectDBInterface {
                     values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
                     values.put(Common.colCATEGORY_SYNC_STATUS, syncStatus);
                     values.put(Common.colCATEGORY_ACTIVE_STATUS, syncObject.getActiveStatus());
-                    whereArgs = new String[]{syncObject.getName()};
-                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(syncObject.getID()) +
+                    whereArgs = new String[]{Integer.toString(existingCategory.getID())};
+                    Log.d(className, "Updating Category Record :: id = " + Integer.toString(existingCategory.getID()) +
                             ", name = " + syncObject.getName() +
                             ", serverID = " + Integer.toString(syncObject.getServerID()) +
                             ", syncStatus = " + Integer.toString(syncStatus) +
@@ -384,7 +395,8 @@ public class CategoryDBInterface implements IObjectDBInterface {
             Log.d(className, "Number of Category Records = " + Integer.toString(updatedRecords));
         }
         catch (Exception e) {
-            Log.e(className, "Exception Updating Categories from Server :: " + e.getMessage());
+          Log.e(className, "Exception Updating Categories from Server :: " + e.getMessage());
+          dbHelper.close();
         }
         return updatedRecords;
     }

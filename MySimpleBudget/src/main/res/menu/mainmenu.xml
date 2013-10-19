@@ -6,7 +6,7 @@
           android:title="@string/action_logout"
           android:showAsAction="never" /> -->
     <item android:id="@+id/action_login"
-          android:title="@string/action_sign_in_short"
+          android:title="Login"
           android:visible="false"
           android:showAsAction="never" />
     <item android:id="@+id/action_upload_debits"
