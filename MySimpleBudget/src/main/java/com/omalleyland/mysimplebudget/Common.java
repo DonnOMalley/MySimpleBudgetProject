@@ -1,10 +1,5 @@
 package com.omalleyland.mysimplebudget;
 
-import android.util.Log;
-
-import java.net.PortUnreachableException;
-import java.security.PublicKey;
-
 /**
  * Created by omal310371 on 6/6/13.
  */
@@ -14,7 +9,7 @@ public class Common {
     public static final int         UNKNOWN                             = -1;
 
     /* SQLite DB Constants */
-    public static final int         DATABASE_VERSION                    = 8;
+    public static final int         DATABASE_VERSION                    = 12;
     public static final String      DATABASE_NAME                       = APPLICATION_NAME + "DB";
 
     /* Database Table Status Constants */
@@ -45,7 +40,7 @@ public class Common {
     public static final String      CREATE_CATEGORY_TABLE               = "CREATE TABLE " + tblCATEGORIES + "(" +
                                                                             colCATEGORY_ID + " integer PRIMARY KEY, " +
                                                                             colCATEGORY_NAME + " text NOT NULL UNIQUE, " +
-                                                                            colCATEGORY_SERVER_ID + " integer UNIQUE, " +
+                                                                            colCATEGORY_SERVER_ID + " integer, " +
                                                                             colCATEGORY_SYNC_STATUS + " integer NOT NULL, " +
                                                                             colCATEGORY_ACTIVE_STATUS + " integer NOT NULL);";
     public static final String      DROP_CATEGORY_TABLE                 = "DROP TABLE IF EXISTS " + tblCATEGORIES;
@@ -70,7 +65,7 @@ public class Common {
     public static final String      CREATE_STORE_TABLE                  = "CREATE TABLE " + tblSTORES + "(" +
                                                                             colSTORE_ID + " integer PRIMARY KEY, " +
                                                                             colSTORE_NAME + " text NOT NULL UNIQUE, " +
-                                                                            colSTORE_SERVER_ID + " integer UNIQUE, " +
+                                                                            colSTORE_SERVER_ID + " integer, " +
                                                                             colSTORE_SYNC_STATUS + " integer NOT NULL, " +
                                                                             colSTORE_ACTIVE_STATUS + " integer NOT NULL);";
     public static final String      DROP_STORE_TABLE                    = "DROP TABLE IF EXISTS " + tblSTORES;
@@ -134,6 +129,7 @@ public class Common {
     public static final String      PASSWORD_PREFERENCE                 = "preferenceLoginPassword";
     public static final String      OFFLINE_PREFERENCE                  = "preferenceOffline";
     public static final String      AUTO_SYNC_PREFERENCE                = "preferenceSyncOnLoad";
+    public static final String      DEFAULT_DEBIT_DATE                  = "preferenceDefaultDebitDate";
 
     /* Login Activity Intent Extras/Constants */
     public static final String      LOGIN_RESULT_USER_EXTRA             = "LOGIN_RESULT_USER";

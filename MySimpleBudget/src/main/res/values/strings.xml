@@ -33,6 +33,8 @@
     <string name="preference_startup_offline_summary">Select to use the application in offline mode by default</string>
     <string name="preference_automatically_sync_data">Automatically Sync Data on Startup</string>
     <string name="preference_automatically_sync_data_summary">Sync Configuration and Debits automatically on startup</string>
+    <string name="preference_default_debit_date">Default Debit Date to Current Date</string>
+    <string name="preference_default_debit_date_summary">Hides Calendar Control and uses current date for Debit</string>
 
     <!-- Budget/Spending Info Preference Screen Preferences -->
     <string name="preference_budget_spending_info_title">Budget/Spending Info Web Addresses</string>

@@ -36,8 +36,6 @@ public class DebitDBInterface implements IObjectDBInterface {
     @Override
     public SyncObject cursorToSyncObject(Cursor cursor) {
 
-        String floatString;
-
         Log.v(className, "Writing Cursor to Debit Object");
 
         Debit debit = new Debit();
@@ -377,8 +375,7 @@ public class DebitDBInterface implements IObjectDBInterface {
 
     @Override
     public JSONObject buildJSON(int httpType, List<Integer> objectSyncStatuses, String userName, String password) {
-        List<SyncObject>    syncObjects         = new ArrayList<SyncObject>();
-        Debit               debit;
+        List<SyncObject>    syncObjects;
         JSONObject          jsonObjectResult    = null;
         JSONObject          debitJSON;
         JSONArray           jsonDebitArray      = new JSONArray();
@@ -405,20 +402,20 @@ public class DebitDBInterface implements IObjectDBInterface {
                 }
             }
         }
-        else if(httpType == Common.HTTP_TYPE_GET) {
-            try {
+//        else if(httpType == Common.HTTP_TYPE_GET) {
+//            try {
                 //GET Functionality Not implemented at this time.
 //                jsonObjectResult = new JSONObject();
 //                jsonObjectResult.put("type", Common.HTTP_GET_JSON_TEXT);
 //                jsonObjectResult.put("user", userName);
 //                jsonObjectResult.put(Common.DEBIT_JSON_ARRAY, jsonDebitArray);    //Just an Empty Array
-                Log.d(this.className, jsonObjectResult.toString());
-            }
-            catch (Exception e) {
-                Log.e(this.className, "Exception Building Debit JSON For GET :: " + e.getMessage());
-            }
-
-        }
+//                Log.d(this.className, jsonObjectResult.toString());
+//            }
+//            catch (Exception e) {
+//                Log.e(this.className, "Exception Building Debit JSON For GET :: " + e.getMessage());
+//            }
+//
+//        }
         else if(httpType == Common.HTTP_TYPE_VERIFY) {
             try {
 //                syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
@@ -473,17 +470,15 @@ public class DebitDBInterface implements IObjectDBInterface {
         SQLiteDatabase db;
         int localCategoryID;
         int serverCategoryID;
-        String whereClause = Common.colDEBIT_SERVER_CATEGORY_ID + " = ?";
-        String[] whereArgs = new String[]{Integer.toString(-1)};
+        String sql;
 
         Log.v(className, "Querying List of Categories from Debits");
         try {
             db = dbHelper.getWritableDatabase();
 
-            String sql = "";
-            sql = "SELECT " + Common.colDEBIT_LOCAL_CATEGORY_ID + ", " + Common.colDEBIT_SERVER_CATEGORY_ID + " FROM " + Common.tblDebits +
-                    " WHERE " + Common.colDEBIT_SERVER_CATEGORY_ID + "<0 AND " + Common.colDEBIT_LOCAL_CATEGORY_ID + " IN (" +
-                    "SELECT " + Common.colCATEGORY_ID + " FROM " + Common.tblCATEGORIES + " WHERE " + Common.colCATEGORY_SERVER_ID + " >=0)";
+            sql = "SELECT d." + Common.colDEBIT_LOCAL_CATEGORY_ID + ", c." + Common.colCATEGORY_SERVER_ID + " FROM " + Common.tblDebits + " d" +
+                    " INNER JOIN " + Common.tblCATEGORIES + " c on c." + Common.colCATEGORY_ID + "=d." + Common.colDEBIT_LOCAL_CATEGORY_ID +
+                    " WHERE d." + Common.colDEBIT_SERVER_CATEGORY_ID + "=" + Common.UNKNOWN;
             Log.d(className, "Executing SQL :: " + sql);
             Cursor cursor = db.rawQuery(sql, null);
 
@@ -511,17 +506,15 @@ public class DebitDBInterface implements IObjectDBInterface {
         SQLiteDatabase db;
         int localStoreID;
         int serverStoreID;
-        String whereClause = Common.colDEBIT_SERVER_STORE_ID + " = ?";
-        String[] whereArgs = new String[]{Integer.toString(-1)};
+        String sql;
 
         Log.v(className, "Querying List of Stores from Debits");
         try {
             db = dbHelper.getWritableDatabase();
 
-            String sql = "";
-            sql = "SELECT " + Common.colDEBIT_LOCAL_STORE_ID + ", " + Common.colDEBIT_SERVER_STORE_ID + " FROM " + Common.tblDebits +
-                    " WHERE " + Common.colDEBIT_SERVER_STORE_ID + "<0 AND " + Common.colDEBIT_LOCAL_STORE_ID + " IN (" +
-                    "SELECT " + Common.colSTORE_ID + " FROM " + Common.tblSTORES + " WHERE " + Common.colSTORE_SERVER_ID + " >=0)";
+            sql = "SELECT d." + Common.colDEBIT_LOCAL_STORE_ID + ", s." + Common.colSTORE_SERVER_ID + " FROM " + Common.tblDebits + " d" +
+                    " INNER JOIN " + Common.tblSTORES + " s on s." + Common.colSTORE_ID + "=d." + Common.colDEBIT_LOCAL_STORE_ID +
+                    " WHERE d." + Common.colDEBIT_SERVER_STORE_ID + "=" + Common.UNKNOWN;
             Log.d(className, "Executing SQL :: " + sql);
             Cursor cursor = db.rawQuery(sql, null);
 
@@ -547,8 +540,7 @@ public class DebitDBInterface implements IObjectDBInterface {
         //Get List of Categories to Update in Debit List
         SQLiteDatabase db;
         int updatedRecords = 0;
-        String whereClause = Common.colDEBIT_LOCAL_CATEGORY_ID + " = ? AND " + Common.colDEBIT_SERVER_CATEGORY_ID + " < 0";
-        String[] whereArgs;
+        String whereClause = Common.colDEBIT_LOCAL_CATEGORY_ID + " = ? AND " + Common.colDEBIT_SERVER_CATEGORY_ID + " = " + Integer.toString(Common.UNKNOWN);
         ContentValues values = new ContentValues();
         Map<Integer, Integer> categoryMap;
         int serverCategoryID;
@@ -563,6 +555,7 @@ public class DebitDBInterface implements IObjectDBInterface {
                 for(Integer localCategoryID: categoryMap.keySet()) {
                     serverCategoryID = categoryMap.get(localCategoryID);
                     values.clear();
+                    Log.d(className, "Updating Debit Records For Category ID(" + Integer.toString(localCategoryID) + ") = " + Integer.toString(serverCategoryID));
                     values.put(Common.colDEBIT_SERVER_CATEGORY_ID, serverCategoryID);
                     updatedRecords += db.update(Common.tblDebits, values, whereClause, new String[]{Integer.toString(localCategoryID)});
                 }
@@ -579,8 +572,7 @@ public class DebitDBInterface implements IObjectDBInterface {
         //Get List of Stores to Update in Debit List
         SQLiteDatabase db;
         int updatedRecords = 0;
-        String whereClause = Common.colDEBIT_LOCAL_STORE_ID + " = ? AND " + Common.colDEBIT_SERVER_STORE_ID + " < 0";
-        String[] whereArgs;
+        String whereClause = Common.colDEBIT_LOCAL_STORE_ID + " = ? AND " + Common.colDEBIT_SERVER_STORE_ID + " = " + Integer.toString(Common.UNKNOWN);
         ContentValues values = new ContentValues();
         Map<Integer, Integer> storeMap;
         int serverStoreID;
@@ -595,6 +587,7 @@ public class DebitDBInterface implements IObjectDBInterface {
                 for(Integer localStoreID: storeMap.keySet()) {
                     serverStoreID = storeMap.get(localStoreID);
                     values.clear();
+                    Log.d(className, "Updating Debit Records For Store ID(" + Integer.toString(localStoreID) + ") = " + Integer.toString(serverStoreID));
                     values.put(Common.colDEBIT_SERVER_STORE_ID, serverStoreID);
                     updatedRecords += db.update(Common.tblDebits, values, whereClause, new String[]{Integer.toString(localStoreID)});
                 }

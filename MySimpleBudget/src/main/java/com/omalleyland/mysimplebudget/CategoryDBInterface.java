@@ -5,13 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.view.View;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -63,9 +56,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put(Common.colCATEGORY_NAME, syncObject.getName());
-                if(syncObject.getServerID() > -1) {
-                    values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
-                }
+                values.put(Common.colCATEGORY_SERVER_ID, syncObject.getServerID());
                 values.put(Common.colCATEGORY_SYNC_STATUS, syncObject.getSyncStatus());
                 values.put(Common.colCATEGORY_ACTIVE_STATUS, syncObject.getActiveStatus());
                 Log.v(className, "Inserting into Category Table");
@@ -305,7 +296,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
         Log.v(className, "Updating Categories with Values from List");
         try {
 
-            Category existingCategory;
+            Category existingCategory = null;
             for(SyncObject syncObject : syncObjects) {
                 //Check for category to exist,
                 //  if exists, update
@@ -313,10 +304,11 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 if(syncObject.getServerID() != Common.UNKNOWN) {
                   existingCategory = (Category)getObject(syncObject.getServerID());
                 }
-                else {
+                //if the category doesn't exist by Server ID, check by Name
+                if(existingCategory == null) {
                   existingCategory = (Category)getObject(syncObject.getName());
                 }
-              if(existingCategory!=null) {
+                if(existingCategory!=null) {
                     db = dbHelper.getWritableDatabase();
                     values.clear();
                     values.put(Common.colCATEGORY_NAME, syncObject.getName());
@@ -359,7 +351,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
         Log.v(className, "Updating Categories with Values from List");
         try {
 
-            Category existingCategory;
+            Category existingCategory = null;
             for(SyncObject syncObject : syncObjects) {
                 //Check for category to exist,
                 //  if exists, update
@@ -367,7 +359,7 @@ public class CategoryDBInterface implements IObjectDBInterface {
                 if(syncObject.getServerID() != Common.UNKNOWN) {
                   existingCategory = (Category)getObject(syncObject.getServerID());
                 }
-                else {
+                if(existingCategory == null) {
                   existingCategory = (Category)getObject(syncObject.getName());
                 }
                 if(existingCategory!=null) {

@@ -8,7 +8,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -88,18 +87,14 @@ public class PostDebitClick implements View.OnClickListener {
                 postDebit = new Debit();
                 postDebit.setAmount(amount);
                 postDebit.setLocalCategoryID(category.getID());
-                if(category.getServerID() != Common.UNKNOWN) {
-                    postDebit.setCategoryID(category.getServerID());
-                }
-                else {
+                postDebit.setCategoryID(category.getServerID());
+                if(postDebit.getCategoryID() == Common.UNKNOWN) {
                     canPostToServer = false;
                 }
 
                 postDebit.setLocalStoreID(store.getID());
-                if(store.getServerID() != Common.UNKNOWN) {
-                    postDebit.setStoreID(store.getServerID());
-                }
-                else {
+                postDebit.setStoreID(store.getServerID());
+                if(postDebit.getStoreID() == Common.UNKNOWN) {
                     canPostToServer = false;
                 }
                 postDebit.setDateString(date);

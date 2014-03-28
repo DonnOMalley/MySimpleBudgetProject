@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,9 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,6 +42,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
     private String  loginValidationPage;
     private Boolean offlineStartup;
     private Boolean autoSyncStartup;
+    private Boolean defaultDebitDate;
 
     private ValidateLogin validateLogin;
     private ServerSynchroniser serverSynchroniser;
@@ -87,6 +87,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
         password                    = prefs.getString(Common.PASSWORD_PREFERENCE, "");
         offlineStartup              = prefs.getBoolean(Common.OFFLINE_PREFERENCE, false);
         autoSyncStartup             = prefs.getBoolean(Common.AUTO_SYNC_PREFERENCE, true);
+        defaultDebitDate            = prefs.getBoolean(Common.DEFAULT_DEBIT_DATE, false);
         Log.d(className, "Preferences Assigned to Local Variables");
 
         if(!offlineStartup) {
@@ -113,6 +114,13 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             //Populate UI off of configuration
             loadCategorySpinner();
             loadStoreSpinner();
+        }
+
+        if((defaultDebitDate) && (findViewById(R.id.taggedLayout).getTag().equals("default_layout"))) {
+            if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_PORTRAIT) {
+               dpDebitDate.setVisibility(View.INVISIBLE);
+                dpDebitDate.getLayoutParams().height=0;
+            }
         }
     }
 
@@ -187,7 +195,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
               //Posting Complete Message will be shown when posting completes
               return true;
             case R.id.action_login_preferences:
-                startActivity(new Intent(MainActivity.this, Preferences.class));
+                startActivityForResult(new Intent(MainActivity.this, Preferences.class), Common.PREFERENCE_RESULT_CODE);
                 return true;
             case R.id.action_full_sync:
                 prefs.edit().putString(Common.LAST_CATEGORY_SYNC_PREFERENCE, Integer.toString(Common.UNKNOWN)).commit();
@@ -283,6 +291,7 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
             password                    = prefs.getString(Common.PASSWORD_PREFERENCE, "");
             offlineStartup              = prefs.getBoolean(Common.OFFLINE_PREFERENCE, false);
             autoSyncStartup             = prefs.getBoolean(Common.AUTO_SYNC_PREFERENCE, true);
+            defaultDebitDate            = prefs.getBoolean(Common.DEFAULT_DEBIT_DATE, false);
 
             if((this.serverAddress.length() == 0) || (this.loginValidationPage.length() == 0)) {
                 Log.d(className, "Validation Server Missing - Application Exiting");
@@ -290,6 +299,17 @@ public class MainActivity extends Activity implements IBackgroundProcessor {
                 this.finish();
             }
             else if(userName.length() > 0 && password.length() > 0) {
+                if((defaultDebitDate) && (findViewById(R.id.taggedLayout).getTag().equals("default_layout"))) {
+                    if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_PORTRAIT) {
+                        dpDebitDate.setVisibility(View.INVISIBLE);
+                        dpDebitDate.getLayoutParams().height=0;
+                    }
+                }
+                else {
+                    dpDebitDate.setVisibility(View.VISIBLE);
+                    dpDebitDate.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                }
+
                 if(!offlineStartup) {
                     Log.d(className, "Starting Async Login Attempt");
                     if(!this.serverAddress.endsWith("/")) {

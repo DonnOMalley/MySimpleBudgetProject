@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.view.ViewDebug;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -58,9 +57,7 @@ public class StoreDBInterface implements IObjectDBInterface {
                 db = dbHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put(Common.colSTORE_NAME, syncObject.getName());
-                if(syncObject.getServerID() > -1) {
-                    values.put(Common.colSTORE_SERVER_ID, syncObject.getServerID());
-                }
+                values.put(Common.colSTORE_SERVER_ID, syncObject.getServerID());
                 values.put(Common.colSTORE_SYNC_STATUS, syncObject.getSyncStatus());
                 values.put(Common.colSTORE_ACTIVE_STATUS, syncObject.getActiveStatus());
                 Log.v(className, "Inserting into Store Table");
@@ -304,12 +301,12 @@ public class StoreDBInterface implements IObjectDBInterface {
 
         Log.v(className, "Updating Stores with Values from List");
         try {
-            Store existingStore;
+            Store existingStore = null;
             for(SyncObject syncObject : syncObjects) {
               if(syncObject.getServerID() != Common.UNKNOWN) {
                 existingStore = (Store)getObject(syncObject.getServerID());
               }
-              else {
+              if(existingStore == null) {
                 existingStore = (Store)getObject(syncObject.getName());
               }
               db = dbHelper.getWritableDatabase();
@@ -356,7 +353,7 @@ public class StoreDBInterface implements IObjectDBInterface {
         Log.v(className, "Updating Stores with Values from List");
         try {
 
-            Store existingStore;
+            Store existingStore = null;
             for(SyncObject syncObject : syncObjects) {
                 //Check for category to exist,
                 //  if exists, update
@@ -364,7 +361,7 @@ public class StoreDBInterface implements IObjectDBInterface {
                 if(syncObject.getServerID() != Common.UNKNOWN) {
                   existingStore = (Store)getObject(syncObject.getServerID());
                 }
-                else {
+                if(existingStore == null) {
                   existingStore = (Store)getObject(syncObject.getName());
                 }
                 db = dbHelper.getWritableDatabase();
@@ -445,10 +442,10 @@ public class StoreDBInterface implements IObjectDBInterface {
         else if(httpType == Common.HTTP_TYPE_VERIFY) {
             try {
                 syncObjects = getUpdatedDatabaseObjects(objectSyncStatuses);
+                jsonObjectResult = new JSONObject();
+                jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
+                jsonObjectResult.put("user", userName);
                 if(syncObjects.size() > 0) {
-                    jsonObjectResult = new JSONObject();
-                    jsonObjectResult.put("type", Common.HTTP_VERIFY_JSON_TEXT);
-                    jsonObjectResult.put("user", userName);
                     for(SyncObject syncObject: syncObjects) {
                         storeJSON = new JSONObject(((Store)syncObject).getMap());
                         jsonStoreArray.put(storeJSON);
